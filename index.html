@@ -501,6 +501,7 @@
             border-radius: 3px;
             font-size: 0.72rem;
             font-weight: bold;
+            display: inline-block;
         }
         .badge-success { background: rgba(96, 165, 250, 0.2); color: #60a5fa; }
         .badge-danger { background: rgba(248, 113, 113, 0.2); color: #f87171; }
@@ -538,10 +539,15 @@
         .btn-info { background-color: #0284c7; color: #fff; }
         .btn-danger { background-color: #dc2626; color: #fff; }
 
+        /* MODO ESPECIAL DE RENDERIZAÇÃO PARA PRINT INTEIRO */
         .force-full-print {
             max-height: none !important;
             overflow: visible !important;
-            width: 960px !important;
+            width: 1050px !important;
+        }
+
+        .force-full-print th {
+            position: static !important;
         }
     </style>
 </head>
@@ -712,6 +718,10 @@
                 </div>
 
                 <div id="printableTableArea">
+                    <div style="padding-bottom:10px; margin-bottom:10px; border-bottom:1px solid #12223c;">
+                        <h2 style="font-size:1.1rem; color:#60a5fa; text-transform:uppercase;">MERCADO RP - Controle Semanal de Produtividade</h2>
+                        <span style="font-size:0.8rem; color:#7b93b8;" id="printWeekSpan">19/10/2026 à 25/10/2026</span>
+                    </div>
                     <div class="table-responsive" id="tableResponsiveBox">
                         <table class="habbo-table">
                             <thead>
@@ -856,6 +866,7 @@
                 document.getElementById("adminScreen").style.display = "block";
                 document.getElementById("mainWrapper").classList.add("wide");
                 document.getElementById("adminWeekText").innerText = currentWeekText;
+                document.getElementById("printWeekSpan").innerText = currentWeekText;
                 renderSchedule();
                 renderAdminTable();
             } else if (pass) {
@@ -1022,6 +1033,7 @@
 
                 saveData();
                 document.getElementById("adminWeekText").innerText = currentWeekText;
+                document.getElementById("printWeekSpan").innerText = currentWeekText;
                 initApp();
                 renderSchedule();
                 renderAdminTable();
@@ -1063,16 +1075,14 @@
             });
         }
 
-        // GERADOR DE IMAGEM CORRIGIDO PARA EVITAR CORTES NOS NÚMEROS
+        // GERADOR DE IMAGEM COM CABEÇALHO FIXO E SEM CORTES DE COLUNA
         function generateTableImage() {
             const area = document.getElementById("printableTableArea");
             const responsiveBox = document.getElementById("tableResponsiveBox");
             const actionCols = document.querySelectorAll(".action-col");
 
-            // Oculta colunas de ação
             actionCols.forEach(c => c.style.display = "none");
 
-            // Substitui temporariamente os campos <input> e <select> por spans com texto puro
             const turnCells = document.querySelectorAll(".turn-cell");
             const roleCells = document.querySelectorAll(".role-cell");
 
@@ -1092,9 +1102,8 @@
                 backgroundColor: "#060b14",
                 scale: 2,
                 useCORS: true,
-                windowWidth: 1000
+                windowWidth: 1200
             }).then(canvas => {
-                // Restaura o formato editável normal da tabela
                 responsiveBox.classList.remove("force-full-print");
                 actionCols.forEach(c => c.style.display = "");
                 renderAdminTable();
