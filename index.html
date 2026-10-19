@@ -323,6 +323,12 @@
             max-height: 450px;
         }
 
+        /* Classe especial ativada apenas na hora do print */
+        .table-responsive.no-scroll {
+            max-height: none !important;
+            overflow: visible !important;
+        }
+
         table.habbo-table {
             width: 100%;
             border-collapse: collapse;
@@ -489,7 +495,7 @@
                     <h2>MERCADO - Controle Semanal de Produtividade</h2>
                     <span id="printWeekSpan">19/10/2026 à 25/10/2026</span>
                 </div>
-                <div class="table-responsive">
+                <div class="table-responsive" id="tableResponsiveBox">
                     <table class="habbo-table">
                         <thead>
                             <tr>
@@ -500,7 +506,7 @@
                                 <th>Turnos Feitos</th>
                                 <th>Meta</th>
                                 <th>Status</th>
-                                <th>Ações</th>
+                                <th class="action-col">Ações</th>
                             </tr>
                         </thead>
                         <tbody id="tableBody">
@@ -683,7 +689,7 @@
                             ${alcançou ? 'Alcançada' : 'Não alcançada'}
                         </span>
                     </td>
-                    <td>
+                    <td class="action-col">
                         <button class="btn btn-admin btn-sm" onclick="removeEmp(${index})">❌</button>
                     </td>
                 `;
@@ -748,18 +754,30 @@
             }
         }
 
-        // FUNÇÃO PARA GERAR A IMAGEM DA TABELA AUTOMATICAMENTE
+        // GERAR IMAGEM COMPLETA DA TABELA SEM CORTES
         function generateTableImage() {
             const tableArea = document.getElementById("printableTableArea");
+            const box = document.getElementById("tableResponsiveBox");
             
-            // Renderiza o elemento como canvas
+            // Remove a barra de rolagem temporariamente para que todos apareçam na foto
+            box.classList.add("no-scroll");
+
+            // Oculta a coluna de ações (botão ❌) durante o print
+            const actionCols = document.querySelectorAll(".action-col");
+            actionCols.forEach(col => col.style.display = "none");
+
             html2canvas(tableArea, {
                 backgroundColor: "#121214",
-                scale: 2 // Alta qualidade
+                scale: 2,
+                useCORS: true
             }).then(canvas => {
-                // Cria link de download automático
+                // Restaura o layout normal após tirar a foto
+                box.classList.remove("no-scroll");
+                actionCols.forEach(col => col.style.display = "");
+
+                // Baixa a imagem
                 const link = document.createElement('a');
-                link.download = `Relatorio_Turnos_${currentWeekText.replace(/[/]/g, '-')}.png`;
+                link.download = `Tabela_Produtividade_${currentWeekText.replace(/[/]/g, '-')}.png`;
                 link.href = canvas.toDataURL('image/png');
                 link.click();
             });
