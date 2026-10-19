@@ -60,10 +60,11 @@
             z-index: 10;
             position: relative;
             backdrop-filter: blur(8px);
+            transition: max-width 0.3s ease;
         }
 
         .card-container.wide {
-            max-width: 950px;
+            max-width: 1050px;
         }
 
         .header-title {
@@ -363,6 +364,7 @@
             overflow-x: auto;
             border-radius: 8px;
             border: 1px solid #323238;
+            max-height: 500px;
         }
 
         table.habbo-table {
@@ -381,6 +383,9 @@
             text-transform: uppercase;
             font-size: 0.75rem;
             border-bottom: 2px solid #323238;
+            position: sticky;
+            top: 0;
+            z-index: 2;
         }
 
         table.habbo-table td {
@@ -400,15 +405,8 @@
             font-weight: bold;
         }
 
-        .badge-success {
-            background-color: rgba(0, 179, 126, 0.2);
-            color: #00b37e;
-        }
-
-        .badge-danger {
-            background-color: rgba(247, 90, 104, 0.2);
-            color: #f75a68;
-        }
+        .badge-success { background-color: rgba(0, 179, 126, 0.2); color: #00b37e; }
+        .badge-danger { background-color: rgba(247, 90, 104, 0.2); color: #f75a68; }
 
         .editable-input {
             background: #29292e;
@@ -416,7 +414,7 @@
             color: #fff;
             padding: 4px 6px;
             border-radius: 4px;
-            width: 70px;
+            width: 75px;
             font-size: 0.85rem;
         }
 
@@ -456,7 +454,7 @@
             </div>
 
             <button class="btn btn-primary" onclick="loginUser()">Acessar Meu Relatório</button>
-            <button class="btn btn-admin" onclick="showAdminLogin()">Área do Gerente (Tabela Geral)</button>
+            <button class="btn btn-admin" onclick="showAdminLogin()">Área do Gerente (Tabela Completa)</button>
         </div>
 
         <!-- PAINEL INDIVIDUAL DO FUNCIONÁRIO -->
@@ -475,7 +473,7 @@
 
             <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="label">Início da Semana</div>
+                    <div class="label">Turnos Até 18/10</div>
                     <div class="val" id="uInitial">1606</div>
                 </div>
                 <div class="stat-card">
@@ -530,7 +528,7 @@
                     <strong>Semana Ativa:</strong> <span id="adminWeekText">19/10/2026 à 25/10/2026</span>
                 </div>
                 <div style="display:flex; gap:8px;">
-                    <button class="btn btn-warning btn-sm" onclick="advanceWeek()">🔄 Virar Próxima Semana</button>
+                    <button class="btn btn-warning btn-sm" onclick="advanceWeek()">🔄 Virar Nova Semana</button>
                     <button class="btn btn-success btn-sm" onclick="addNewEmployeePrompt()">+ Add Funcionário</button>
                 </div>
             </div>
@@ -541,8 +539,8 @@
                         <tr>
                             <th>Funcionário(a)</th>
                             <th>Cargo</th>
-                            <th>Turno Inicial</th>
-                            <th>Turno Atual</th>
+                            <th>Turnos Finais (Até 18/10)</th>
+                            <th>Turnos Atuais</th>
                             <th>Feitos</th>
                             <th>Meta</th>
                             <th>Status</th>
@@ -559,7 +557,7 @@
     </div>
 
     <script>
-        // BASE DE DADOS PADRÃO (Conforme relatório do Habbo RP)
+        // BASE DE DADOS COMPLETA COM OS DADOS DA ÚLTIMA SEMANA (Até 18/10/2026)
         const defaultEmployees = [
             { name: "Afrontoso", role: "Gerente", initial: 3401, current: 3401, meta: 15 },
             { name: "Chantal", role: "Supervisor", initial: 2181, current: 2181, meta: 15 },
@@ -583,7 +581,6 @@
             { name: "cityhunter", role: "Operador de Loja", initial: 17, current: 17, meta: 15 }
         ];
 
-        // CARREGAR DADOS DO LOCALSTORAGE
         let employees = JSON.parse(localStorage.getItem("habbo_market_emp")) || defaultEmployees;
         let currentWeekText = localStorage.getItem("habbo_market_week") || "19/10/2026 à 25/10/2026";
         let activeUser = null;
@@ -602,13 +599,11 @@
             bgContainer.appendChild(icon);
         }
 
-        // SALVAR ESTADO
         function saveData() {
             localStorage.setItem("habbo_market_emp", JSON.stringify(employees));
             localStorage.setItem("habbo_market_week", currentWeekText);
         }
 
-        // LOGIN
         function loginUser() {
             const nick = document.getElementById("usernameInput").value.trim().toLowerCase();
             const errorMsg = document.getElementById("errorMessage");
@@ -664,7 +659,6 @@
             document.getElementById("usernameInput").value = "";
         }
 
-        // TECLADO E CÁLCULO FUNCIONÁRIO
         const display = document.getElementById("display");
 
         function updateDisplay() {
@@ -699,7 +693,6 @@
             const resBox = document.getElementById("resultBox");
             const resText = document.getElementById("resultText");
 
-            // Atualiza no banco local
             activeUser.current = currVal;
             saveData();
 
@@ -712,7 +705,6 @@
             }
         }
 
-        // FUNÇÕES DO PAINEL ADMIN
         function renderAdminTable() {
             const tbody = document.getElementById("tableBody");
             tbody.innerHTML = "";
@@ -726,7 +718,7 @@
                 tr.innerHTML = `
                     <td><strong>${emp.name}</strong></td>
                     <td>${emp.role}</td>
-                    <td>${emp.initial}</td>
+                    <td><strong style="color: #a8a8b3;">${emp.initial}</strong></td>
                     <td>
                         <input type="number" class="editable-input" value="${emp.current}" onchange="updateEmpCurrent(${index}, this.value)">
                     </td>
@@ -771,7 +763,7 @@
             const name = prompt("Nome do Funcionário:");
             if (!name) return;
             const role = prompt("Cargo:", "Operador de Loja") || "Operador de Loja";
-            const initial = parseInt(prompt("Turno Inicial:", "0")) || 0;
+            const initial = parseInt(prompt("Turno Inicial (Base da última semana):", "0")) || 0;
 
             employees.push({
                 name: name.trim(),
@@ -785,11 +777,10 @@
             renderAdminTable();
         }
 
-        // VIRAR SEMANA (Turnos Finais viram Iniciais)
         function advanceWeek() {
-            if (confirm("Deseja virar a semana? Os turnos atuais se tornarão o novo Turno Inicial de cada funcionário para a próxima semana!")) {
+            if (confirm("Deseja virar a semana? Os turnos atuais se tornarão os Turnos Finais/Iniciais da nova semana!")) {
                 employees.forEach(emp => {
-                    emp.initial = emp.current; // O turno final da semana passada vira o inicial da nova
+                    emp.initial = emp.current;
                 });
 
                 const newWeek = prompt("Digite o período da nova semana:", "26/10/2026 à 01/11/2026");
@@ -800,11 +791,10 @@
                 saveData();
                 document.getElementById("adminWeekText").innerText = currentWeekText;
                 renderAdminTable();
-                alert("Semana atualizada com sucesso!");
+                alert("Semana virada com sucesso!");
             }
         }
 
-        // Permite usar a tecla Enter no login
         document.getElementById("usernameInput").addEventListener("keypress", function(e) {
             if (e.key === "Enter") loginUser();
         });
