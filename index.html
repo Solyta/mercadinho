@@ -426,7 +426,6 @@
             background: rgba(96, 165, 250, 0.15);
         }
 
-        /* PAINEL DE ADVERTÊNCIAS */
         .warning-panel {
             background: #060b14;
             border: 1px solid #12223c;
@@ -463,11 +462,13 @@
             padding: 16px;
             border-radius: 6px;
             border: 1px solid #12223c;
+            width: 100%;
         }
 
         .table-responsive {
             overflow-x: auto;
             max-height: 480px;
+            width: 100%;
         }
 
         table.habbo-table {
@@ -526,10 +527,11 @@
         .btn-info { background-color: #0284c7; color: #fff; }
         .btn-danger { background-color: #dc2626; color: #fff; }
 
-        .rendering-canvas {
+        /* CLASSE DE SUPORTE PARA FORÇAR EXIBIÇÃO TOTAL SEM CORTES NO PRINT */
+        .force-full-print {
             max-height: none !important;
             overflow: visible !important;
-            width: 880px !important;
+            width: 900px !important;
         }
     </style>
 </head>
@@ -570,7 +572,7 @@
                 <button class="btn-sub" onclick="showAdminLogin()">Área Administrativa (Gerentes/Supervisores)</button>
             </div>
 
-            <!-- TELA DO FUNCIONÁRIO (SEM EXIBIR ADVERTÊNCIAS) -->
+            <!-- TELA DO FUNCIONÁRIO -->
             <div id="userScreen">
                 <div class="section-title">INFORMAÇÕES PESSOAIS</div>
                 <div class="profile-box">
@@ -645,13 +647,11 @@
                     <button class="btn-sub" style="width:auto; padding:4px 8px; margin:0;" onclick="logout()">Sair</button>
                 </div>
 
-                <!-- CRONOGRAMA -->
                 <div class="schedule-box">
                     <div class="section-title">CRONOGRAMA DE SUPERVISÃO ATÉ O FIM DE 2026</div>
                     <div class="schedule-list" id="scheduleList"></div>
                 </div>
 
-                <!-- PAINEL DE APLICAR ADVERTÊNCIA -->
                 <div class="warning-panel">
                     <div class="section-title">⚠️ REGISTRO DE ADVERTÊNCIA (GERÊNCIA)</div>
                     <div class="warning-form-grid">
@@ -664,12 +664,12 @@
                             <select id="advNum" class="input-field">
                                 <option value="1ª Advertência">1ª Advertência</option>
                                 <option value="2ª Advertência">2ª Advertência</option>
-                                <option value="3ª Advertência (Demissão/Rebaixamento)">3ª Advertência</option>
+                                <option value="3ª Advertência">3ª Advertência</option>
                             </select>
                         </div>
                         <div class="input-group" style="margin:0;">
                             <label>MOTIVO DA PUNÇÃO</label>
-                            <input type="text" id="advMotivo" class="input-field" placeholder="Ex: Ausência em turno obr.">
+                            <input type="text" id="advMotivo" class="input-field" placeholder="Ex: Ausência em turno">
                         </div>
                         <div class="input-group" style="margin:0;">
                             <label>LINK DO PRINT (IMGUR)</label>
@@ -689,7 +689,6 @@
                     </div>
                 </div>
 
-                <!-- CONTROLES DA TABELA -->
                 <div class="admin-controls">
                     <div>
                         <span style="font-size:0.75rem; color:#7b93b8;">SEMANA ATIVA:</span><br>
@@ -702,7 +701,6 @@
                     </div>
                 </div>
 
-                <!-- TABELA IMPRIMÍVEL DE TURNOS -->
                 <div id="printableTableArea">
                     <div class="table-responsive" id="tableResponsiveBox">
                         <table class="habbo-table">
@@ -1021,7 +1019,6 @@
             }
         }
 
-        // ADVERTÊNCIAS & GERADOR DISCORD
         function generateWarningText() {
             const nick = document.getElementById("advNick").value.trim();
             const numAdv = document.getElementById("advNum").value;
@@ -1056,20 +1053,24 @@
             });
         }
 
+        // GERADOR DE IMAGEM OTIMIZADO PARA CELULAR E PC (SEM CORTES)
         function generateTableImage() {
             const area = document.getElementById("printableTableArea");
             const responsiveBox = document.getElementById("tableResponsiveBox");
             const actionCols = document.querySelectorAll(".action-col");
 
+            // Oculta a coluna de ações e aplica largura fixa temporária para renderizar por completo
             actionCols.forEach(c => c.style.display = "none");
-            responsiveBox.classList.add("rendering-canvas");
+            responsiveBox.classList.add("force-full-print");
 
             html2canvas(area, {
                 backgroundColor: "#060b14",
                 scale: 2,
-                useCORS: true
+                useCORS: true,
+                windowWidth: 1000 // Simula uma tela larga no print para evitar qualquer quebra de layout mobile
             }).then(canvas => {
-                responsiveBox.classList.remove("rendering-canvas");
+                // Restaura o layout normal na tela do usuário
+                responsiveBox.classList.remove("force-full-print");
                 actionCols.forEach(c => c.style.display = "");
 
                 const link = document.createElement('a');
