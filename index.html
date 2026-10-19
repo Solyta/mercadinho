@@ -27,7 +27,6 @@
             position: relative;
         }
 
-        /* Fundo Pixel de Ícones */
         .pixel-bg {
             position: fixed;
             top: 0;
@@ -324,9 +323,9 @@
             background-color: #060b14;
             border: 1px solid #12223c;
             border-radius: 5px;
-            padding: 12px;
+            padding: 10px 12px;
             color: #ffffff;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             outline: none;
         }
 
@@ -427,6 +426,38 @@
             background: rgba(96, 165, 250, 0.15);
         }
 
+        /* PAINEL DE ADVERTÊNCIAS */
+        .warning-panel {
+            background: #060b14;
+            border: 1px solid #12223c;
+            border-radius: 6px;
+            padding: 14px;
+            margin-bottom: 16px;
+        }
+
+        .warning-form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .discord-output-box {
+            background: #03060a;
+            border: 1px dashed #1d4ed8;
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 10px;
+        }
+
+        .discord-output-box pre {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.8rem;
+            color: #93c5fd;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
         #printableTableArea {
             background-color: #060b14;
             padding: 16px;
@@ -493,6 +524,7 @@
         .btn-success { background-color: #2563eb; color: #fff; }
         .btn-warning { background-color: #e2a03f; color: #fff; }
         .btn-info { background-color: #0284c7; color: #fff; }
+        .btn-danger { background-color: #dc2626; color: #fff; }
 
         .rendering-canvas {
             max-height: none !important;
@@ -538,7 +570,7 @@
                 <button class="btn-sub" onclick="showAdminLogin()">Área Administrativa (Gerentes/Supervisores)</button>
             </div>
 
-            <!-- TELA DO FUNCIONÁRIO -->
+            <!-- TELA DO FUNCIONÁRIO (SEM EXIBIR ADVERTÊNCIAS) -->
             <div id="userScreen">
                 <div class="section-title">INFORMAÇÕES PESSOAIS</div>
                 <div class="profile-box">
@@ -606,30 +638,71 @@
                 </div>
             </div>
 
-            <!-- TELA DE GERÊNCIA -->
+            <!-- TELA DE GERÊNCIA E SUPERVISÃO -->
             <div id="adminScreen">
                 <div class="section-title" style="display:flex; justify-content:space-between; align-items:center;">
                     <span>PAINEL DE GERÊNCIA E SUPERVISÃO</span>
                     <button class="btn-sub" style="width:auto; padding:4px 8px; margin:0;" onclick="logout()">Sair</button>
                 </div>
 
+                <!-- CRONOGRAMA -->
                 <div class="schedule-box">
                     <div class="section-title">CRONOGRAMA DE SUPERVISÃO ATÉ O FIM DE 2026</div>
                     <div class="schedule-list" id="scheduleList"></div>
                 </div>
 
+                <!-- PAINEL DE APLICAR ADVERTÊNCIA -->
+                <div class="warning-panel">
+                    <div class="section-title">⚠️ REGISTRO DE ADVERTÊNCIA (GERÊNCIA)</div>
+                    <div class="warning-form-grid">
+                        <div class="input-group" style="margin:0;">
+                            <label>NICK DO FUNCIONÁRIO</label>
+                            <input type="text" id="advNick" class="input-field" placeholder="Ex: Solyta">
+                        </div>
+                        <div class="input-group" style="margin:0;">
+                            <label>Nº DA ADVERTÊNCIA</label>
+                            <select id="advNum" class="input-field">
+                                <option value="1ª Advertência">1ª Advertência</option>
+                                <option value="2ª Advertência">2ª Advertência</option>
+                                <option value="3ª Advertência (Demissão/Rebaixamento)">3ª Advertência</option>
+                            </select>
+                        </div>
+                        <div class="input-group" style="margin:0;">
+                            <label>MOTIVO DA PUNÇÃO</label>
+                            <input type="text" id="advMotivo" class="input-field" placeholder="Ex: Ausência em turno obr.">
+                        </div>
+                        <div class="input-group" style="margin:0;">
+                            <label>LINK DO PRINT (IMGUR)</label>
+                            <input type="text" id="advImgur" class="input-field" placeholder="Ex: https://i.imgur.com/...">
+                        </div>
+                    </div>
+                    <button class="btn-sm btn-danger" style="width:100%; padding:8px;" onclick="generateWarningText()">
+                        🚨 APLICAR ADVERTÊNCIA E GERAR TEXTO
+                    </button>
+
+                    <div class="discord-output-box" id="discordOutputContainer" style="display:none;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                            <span style="font-size:0.7rem; color:#7b93b8; font-weight:bold;">FORMATO PARA DISCORD:</span>
+                            <button class="btn-sm btn-info" onclick="copyDiscordText()">📋 Copiar para o Discord</button>
+                        </div>
+                        <pre id="discordTextOutput"></pre>
+                    </div>
+                </div>
+
+                <!-- CONTROLES DA TABELA -->
                 <div class="admin-controls">
                     <div>
                         <span style="font-size:0.75rem; color:#7b93b8;">SEMANA ATIVA:</span><br>
                         <strong id="adminWeekText" style="font-size:0.85rem; color:#60a5fa;">19/10/2026 à 25/10/2026</strong>
                     </div>
                     <div style="display:flex; gap:6px; flex-wrap:wrap;">
-                        <button class="btn-sm btn-info" onclick="generateTableImage()">📷 Baixar Imagem</button>
+                        <button class="btn-sm btn-info" onclick="generateTableImage()">📷 Baixar Imagem (PNG)</button>
                         <button class="btn-sm btn-warning" onclick="advanceWeek()">🔄 Virar Semana</button>
-                        <button class="btn-sm btn-success" onclick="addNewEmployeePrompt()">+ Add Funcional</button>
+                        <button class="btn-sm btn-success" onclick="addNewEmployeePrompt()">+ Add Funcionário</button>
                     </div>
                 </div>
 
+                <!-- TABELA IMPRIMÍVEL DE TURNOS -->
                 <div id="printableTableArea">
                     <div class="table-responsive" id="tableResponsiveBox">
                         <table class="habbo-table">
@@ -759,7 +832,6 @@
 
                 document.getElementById("avatarFrame").style.backgroundImage = `url('https://www.habbo.com.br/habbo-imaging/avatarimage?user=${found.name}&action=std&direction=2&head_direction=2&gesture=sml&size=m')`;
 
-                // A calculadora inicia SEMPRE zerada (0)
                 currentInput = "0";
                 updateDisplay();
                 calculateShift();
@@ -815,14 +887,7 @@
             if (isNaN(currVal)) currVal = 0;
 
             let meta = roleMetas[activeUser.role] || 15;
-            
-            // Se digitou o valor total (maior que o inicial) ou apenas os turnos feitos
-            let feitos = 0;
-            if (currVal >= activeUser.initial) {
-                feitos = currVal - activeUser.initial;
-            } else {
-                feitos = currVal;
-            }
+            let feitos = (currVal >= activeUser.initial) ? (currVal - activeUser.initial) : currVal;
 
             let faltando = meta - feitos;
             const resCard = document.getElementById("resultCard");
@@ -954,6 +1019,41 @@
                 renderAdminTable();
                 alert("Semana virada com sucesso!");
             }
+        }
+
+        // ADVERTÊNCIAS & GERADOR DISCORD
+        function generateWarningText() {
+            const nick = document.getElementById("advNick").value.trim();
+            const numAdv = document.getElementById("advNum").value;
+            const motivo = document.getElementById("advMotivo").value.trim();
+            const imgur = document.getElementById("advImgur").value.trim();
+
+            if (!nick || !motivo) {
+                alert("Preencha ao menos o Nick e o Motivo da advertência!");
+                return;
+            }
+
+            const emp = employees.find(e => e.name.toLowerCase() === nick.toLowerCase());
+            const cargoText = emp ? emp.role : "Funcionário";
+
+            const discordFormatted = `🚨 **MERCADO RP - NOTIFICAÇÃO DE ADVERTÊNCIA** 🚨\n\n` +
+                `👤 **Funcionário(a):** ${nick}\n` +
+                `💼 **Cargo:** ${cargoText}\n` +
+                `⚠️ **Punição:** ${numAdv}\n` +
+                `📝 **Motivo:** ${motivo}\n` +
+                `🖼️ **Comprovação (Print):** ${imgur || 'N/A'}\n` +
+                `📅 **Data:** ${new Date().toLocaleDateString('pt-BR')}\n\n` +
+                `*Esta advertência foi registrada na Administração do Mercado RP.*`;
+
+            document.getElementById("discordTextOutput").innerText = discordFormatted;
+            document.getElementById("discordOutputContainer").style.display = "block";
+        }
+
+        function copyDiscordText() {
+            const text = document.getElementById("discordTextOutput").innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                alert("Texto copiado para a área de transferência! Agora cole no Discord.");
+            });
         }
 
         function generateTableImage() {
