@@ -24,7 +24,6 @@
             position: relative;
         }
 
-        /* Fundo Pixel com ícones caindo */
         .pixel-bg {
             position: absolute;
             top: 0;
@@ -44,23 +43,12 @@
         }
 
         @keyframes floatDown {
-            0% {
-                transform: translateY(-50px) rotate(0deg);
-                opacity: 0;
-            }
-            10% {
-                opacity: 0.25;
-            }
-            90% {
-                opacity: 0.25;
-            }
-            100% {
-                transform: translateY(105vh) rotate(360deg);
-                opacity: 0;
-            }
+            0% { transform: translateY(-50px) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.25; }
+            90% { opacity: 0.25; }
+            100% { transform: translateY(105vh) rotate(360deg); opacity: 0; }
         }
 
-        /* Container Principal */
         .card-container {
             background-color: rgba(32, 32, 36, 0.95);
             border: 2px solid #323238;
@@ -80,7 +68,6 @@
             color: #f75a68;
             text-transform: uppercase;
             letter-spacing: 1px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
 
         .subtitle {
@@ -90,7 +77,6 @@
             margin-bottom: 20px;
         }
 
-        /* Tela de Login */
         #loginScreen {
             display: flex;
             flex-direction: column;
@@ -107,7 +93,6 @@
             font-size: 0.75rem;
             color: #a8a8b3;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
         .input-field {
@@ -118,7 +103,6 @@
             color: #ffffff;
             font-size: 1rem;
             outline: none;
-            transition: border-color 0.2s;
         }
 
         .input-field:focus {
@@ -134,16 +118,11 @@
             font-weight: bold;
             padding: 12px;
             cursor: pointer;
-            transition: background 0.2s, transform 0.1s;
-            margin-top: 6px;
+            transition: background 0.2s;
         }
 
         .btn-primary:hover {
             background-color: #d6404e;
-        }
-
-        .btn-primary:active {
-            transform: scale(0.98);
         }
 
         .error-message {
@@ -157,7 +136,6 @@
             border: 1px solid rgba(247, 90, 104, 0.2);
         }
 
-        /* Tela da Calculadora */
         #calcScreen {
             display: none;
         }
@@ -185,10 +163,6 @@
             cursor: pointer;
             font-size: 0.75rem;
             text-decoration: underline;
-        }
-
-        .btn-logout:hover {
-            color: #f75a68;
         }
 
         .goal-info {
@@ -276,34 +250,21 @@
             font-weight: bold;
             padding: 12px 0;
             cursor: pointer;
-            transition: background 0.2s, transform 0.1s;
+            transition: background 0.2s;
         }
 
-        button.key:hover {
-            background-color: #323238;
-        }
-
-        button.key:active {
-            transform: scale(0.95);
-        }
+        button.key:hover { background-color: #323238; }
+        button.key:active { transform: scale(0.95); }
 
         button.key.action-c {
             background-color: rgba(247, 90, 104, 0.15);
             color: #f75a68;
         }
 
-        button.key.action-c:hover {
-            background-color: rgba(247, 90, 104, 0.25);
-        }
-
         button.key.action-ok {
             grid-column: span 3;
             background-color: #00b37e;
             color: #ffffff;
-        }
-
-        button.key.action-ok:hover {
-            background-color: #00875f;
         }
 
         button.key.action-reset {
@@ -318,7 +279,6 @@
 </head>
 <body>
 
-    <!-- Fundo de Ícones Pixelados Flutuantes -->
     <div class="pixel-bg" id="pixelBg"></div>
 
     <div class="card-container">
@@ -333,7 +293,7 @@
             </div>
 
             <div class="error-message" id="errorMessage">
-                Acesso negado. Usuário não autorizado!
+                Por favor, digite um nickname válido!
             </div>
 
             <button class="btn-primary" onclick="attemptLogin()">Acessar Sistema</button>
@@ -386,21 +346,16 @@
     </div>
 
     <script>
-        // CONFIGURAÇÕES DE ACESSO
-        const allowedUsers = ["solyta", "chantal", "afrontoso"];
-        const metaTurnos = 15; // Meta de turnos da semana
-
-        // ESTADOS DA CALCULADORA
+        const metaTurnos = 15;
         let step = 1;
         let turnoInicial = 0;
         let turnoAtual = 0;
         let currentInput = "0";
 
-        // GERAR ÍCONES NO FUNDO
+        // Gerar fundo pixel
         const bgIcons = ['🛒', '📦', '🪙', '🍎', '🥤', '🍞', '🏬'];
         const bgContainer = document.getElementById('pixelBg');
-
-        for (let i = 0; i < 22; i++) {
+        for (let i = 0; i < 20; i++) {
             let icon = document.createElement('div');
             icon.className = 'pixel-icon';
             icon.innerText = bgIcons[Math.floor(Math.random() * bgIcons.length)];
@@ -410,23 +365,90 @@
             bgContainer.appendChild(icon);
         }
 
-        // SISTEMA DE LOGIN
         function attemptLogin() {
-            const inputVal = document.getElementById("usernameInput").value.trim().toLowerCase();
+            const inputVal = document.getElementById("usernameInput").value.trim();
             const errorMsg = document.getElementById("errorMessage");
 
-            if (allowedUsers.includes(inputVal)) {
+            if (inputVal !== "") {
                 errorMsg.style.display = "none";
                 document.getElementById("loginScreen").style.display = "none";
                 document.getElementById("calcScreen").style.display = "block";
-                
-                // Formatar nome do operador exibido
-                const formattedName = inputVal.charAt(0).toUpperCase() + inputVal.slice(1);
-                document.getElementById("currentUser").innerText = formattedName;
+                document.getElementById("currentUser").innerText = inputVal;
             } else {
                 errorMsg.style.display = "block";
             }
         }
 
-        // Permite pressionar Enter no campo do usuário para entrar
-        document.getElementById("usernameInput").addEventListener("keypress", function(
+        document.getElementById("usernameInput").addEventListener("keypress", function(e) {
+            if (e.key === "Enter") { attemptLogin(); }
+        });
+
+        function logout() {
+            document.getElementById("calcScreen").style.display = "none";
+            document.getElementById("loginScreen").style.display = "flex";
+            document.getElementById("usernameInput").value = "";
+            resetAll();
+        }
+
+        const display = document.getElementById("display");
+        const displayLabel = document.getElementById("displayLabel");
+        const stepIndicator = document.getElementById("stepIndicator");
+        const actionBtn = document.getElementById("actionBtn");
+        const resultBox = document.getElementById("resultBox");
+        const resultText = document.getElementById("resultText");
+
+        function updateDisplay() { display.innerText = currentInput; }
+
+        function appendNumber(num) {
+            if (currentInput === "0") { currentInput = num; } 
+            else { currentInput += num; }
+            updateDisplay();
+        }
+
+        function clearDisplay() { currentInput = "0"; updateDisplay(); }
+
+        function deleteNumber() {
+            if (currentInput.length > 1) { currentInput = currentInput.slice(0, -1); } 
+            else { currentInput = "0"; }
+            updateDisplay();
+        }
+
+        function handleAction() {
+            if (step === 1) {
+                turnoInicial = parseInt(currentInput);
+                step = 2;
+                stepIndicator.innerText = "Passo 2 de 2: Turno Atual";
+                displayLabel.innerText = "Informe o seu turno atual";
+                actionBtn.innerText = "Calcular o que Falta";
+                currentInput = "0";
+                updateDisplay();
+            } else if (step === 2) {
+                turnoAtual = parseInt(currentInput);
+                let feitosEstaSemana = turnoAtual - turnoInicial;
+                if (feitosEstaSemana < 0) feitosEstaSemana = 0;
+                let faltando = metaTurnos - feitosEstaSemana;
+
+                resultBox.style.display = "block";
+                if (faltando > 0) {
+                    resultText.innerHTML = `Feitos: ${feitosEstaSemana}<br><span style="color:#f75a68;">Faltam ${faltando} turnos</span>`;
+                } else {
+                    resultText.innerHTML = `Feitos: ${feitosEstaSemana}<br>🎉 Meta Batida!`;
+                }
+            }
+        }
+
+        function resetAll() {
+            step = 1;
+            turnoInicial = 0;
+            turnoAtual = 0;
+            currentInput = "0";
+            stepIndicator.innerText = "Passo 1 de 2: Turno Inicial";
+            displayLabel.innerText = "Informe o turno do início da semana";
+            actionBtn.innerText = "Confirmar Turno Inicial";
+            resultBox.style.display = "none";
+            updateDisplay();
+        }
+    </script>
+
+</body>
+</html>
