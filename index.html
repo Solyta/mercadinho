@@ -3,57 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mercado Habbo RP - Controle Semanal de Produtividade</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Font (Pixel / Gaming feeling) -->
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        pixel: ['"Press Start 2P"', 'cursive'],
-                        rajdhani: ['Rajdhani', 'sans-serif'],
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                    colors: {
-                        habbo: {
-                            dark: '#121214',
-                            card: '#202024',
-                            border: '#29292e',
-                            red: '#f75a68',
-                            redHover: '#d6404e',
-                            green: '#00b37e',
-                            greenHover: '#00875f',
-                            yellow: '#fba94c',
-                            tableHeader: '#000000',
-                            tableRow: '#1a1a1e'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-
+    <title>Mercado Habbo RP - Controle de Turnos</title>
     <style>
-        /* Estilos personalizados para o tema Pixel / Habbo RP */
-        body {
-            background-color: #0d0e12;
-            color: #e1e1e6;
-            overflow-x: hidden;
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        /* Efeito de fundo flutuante com itens de mercado */
+        body {
+            background: #0f0f1d linear-gradient(135deg, #0d0e15 0%, #1a1c2e 100%);
+            color: #e1e1e6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
         .pixel-bg {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100vw;
-            height: 100vh;
+            width: 100%;
+            height: 100%;
             z-index: 0;
             pointer-events: none;
             overflow: hidden;
@@ -61,845 +37,777 @@
 
         .pixel-icon {
             position: absolute;
-            font-size: 22px;
-            opacity: 0.12;
+            font-size: 24px;
+            opacity: 0.15;
             animation: floatDown linear infinite;
         }
 
         @keyframes floatDown {
             0% { transform: translateY(-50px) rotate(0deg); opacity: 0; }
-            10% { opacity: 0.18; }
-            90% { opacity: 0.18; }
+            10% { opacity: 0.2; }
+            90% { opacity: 0.2; }
             100% { transform: translateY(105vh) rotate(360deg); opacity: 0; }
         }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
+        .card-container {
+            background-color: rgba(32, 32, 36, 0.95);
+            border: 2px solid #323238;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 420px;
+            padding: 28px 24px;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.7);
+            z-index: 10;
+            position: relative;
+            backdrop-filter: blur(8px);
         }
-        ::-webkit-scrollbar-track {
-            background: #121214;
+
+        .card-container.wide {
+            max-width: 950px;
         }
-        ::-webkit-scrollbar-thumb {
+
+        .header-title {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .header-title h1 {
+            font-size: 1.4rem;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .header-title h1 span {
+            background-color: #ffffff;
+            color: #000000;
+            padding: 2px 8px;
+            font-weight: 900;
+        }
+
+        .header-title .subtitle {
+            font-size: 0.85rem;
+            color: #a8a8b3;
+            margin-top: 4px;
+        }
+
+        /* LOGIN */
+        #loginScreen {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .input-group label {
+            font-size: 0.75rem;
+            color: #a8a8b3;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-field {
+            background-color: #121214;
+            border: 1px solid #323238;
+            border-radius: 6px;
+            padding: 12px;
+            color: #ffffff;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .input-field:focus {
+            border-color: #f75a68;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: #f75a68;
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background-color: #d6404e;
+        }
+
+        .btn-admin {
+            background-color: #323238;
+            color: #a8a8b3;
+            margin-top: 6px;
+            font-size: 0.8rem;
+        }
+
+        .btn-admin:hover {
+            background-color: #42424d;
+            color: #ffffff;
+        }
+
+        .error-message {
+            color: #f75a68;
+            font-size: 0.8rem;
+            text-align: center;
+            display: none;
+            background: rgba(247, 90, 104, 0.1);
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid rgba(247, 90, 104, 0.2);
+        }
+
+        /* PAINEL FUNCIONÁRIO */
+        #userScreen, #adminScreen {
+            display: none;
+        }
+
+        .user-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             background: #29292e;
+            padding: 10px 14px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            font-size: 0.85rem;
+        }
+
+        .user-header .info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-header .name {
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .user-header .role {
+            color: #a8a8b3;
+            font-size: 0.75rem;
+        }
+
+        .btn-logout {
+            background: transparent;
+            border: 1px solid #42424d;
+            color: #a8a8b3;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75rem;
+        }
+
+        .btn-logout:hover {
+            background: #f75a68;
+            color: #ffffff;
+            border-color: #f75a68;
+        }
+
+        .week-badge {
+            background: rgba(0, 179, 126, 0.1);
+            border: 1px solid rgba(0, 179, 126, 0.3);
+            color: #00b37e;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            text-align: center;
+            margin-bottom: 16px;
+            font-weight: 500;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .stat-card {
+            background-color: #121214;
+            border: 1px solid #29292e;
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .stat-card .label {
+            font-size: 0.7rem;
+            color: #a8a8b3;
+            text-transform: uppercase;
+        }
+
+        .stat-card .val {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #ffffff;
+            margin-top: 2px;
+        }
+
+        .display-group {
+            background-color: #121214;
+            border: 1px solid #323238;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 14px;
+        }
+
+        .display-label {
+            font-size: 0.75rem;
+            color: #a8a8b3;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .display-value {
+            font-size: 1.8rem;
+            text-align: right;
+            color: #00b37e;
+            font-weight: bold;
+            min-height: 42px;
+        }
+
+        .result-box {
+            background-color: #121214;
+            border: 1px dashed #00b37e;
+            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .result-box.danger {
+            border-color: #f75a68;
+        }
+
+        .result-title {
+            font-size: 0.75rem;
+            color: #a8a8b3;
+            text-transform: uppercase;
+        }
+
+        .result-text {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-top: 4px;
+        }
+
+        .keypad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        button.key {
+            background-color: #29292e;
+            border: none;
+            border-radius: 6px;
+            color: #e1e1e6;
+            font-size: 1.1rem;
+            font-weight: bold;
+            padding: 12px 0;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button.key:hover { background-color: #323238; }
+
+        button.key.action-c {
+            background-color: rgba(247, 90, 104, 0.15);
+            color: #f75a68;
+        }
+
+        button.key.action-ok {
+            grid-column: span 3;
+            background-color: #00b37e;
+            color: #ffffff;
+            margin-top: 4px;
+        }
+
+        button.key.action-ok:hover { background-color: #00875f; }
+
+        /* PAINEL ADMIN TABELA */
+        .admin-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 16px;
+            background: #29292e;
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: 8px;
+            border: 1px solid #323238;
+        }
+
+        table.habbo-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #121214;
+            color: #ffffff;
+            font-size: 0.85rem;
+            text-align: left;
+        }
+
+        table.habbo-table th {
+            background-color: #000000;
+            color: #ffffff;
+            padding: 10px 12px;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            border-bottom: 2px solid #323238;
+        }
+
+        table.habbo-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #29292e;
+        }
+
+        table.habbo-table tr:hover {
+            background-color: #1a1a21;
+        }
+
+        .badge-status {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .badge-success {
+            background-color: rgba(0, 179, 126, 0.2);
+            color: #00b37e;
+        }
+
+        .badge-danger {
+            background-color: rgba(247, 90, 104, 0.2);
+            color: #f75a68;
+        }
+
+        .editable-input {
+            background: #29292e;
+            border: 1px solid #323238;
+            color: #fff;
+            padding: 4px 6px;
+            border-radius: 4px;
+            width: 70px;
+            font-size: 0.85rem;
+        }
+
+        .btn-sm {
+            padding: 6px 10px;
+            font-size: 0.75rem;
             border-radius: 4px;
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #f75a68;
-        }
 
-        .habbo-border {
-            border: 2px solid #29292e;
-            box-shadow: inset -2px -2px 0px rgba(0,0,0,0.4), inset 2px 2px 0px rgba(255,255,255,0.05);
-        }
+        .btn-success { background-color: #00b37e; color: #fff; }
+        .btn-success:hover { background-color: #00875f; }
 
-        .habbo-btn-red {
-            background-color: #f75a68;
-            box-shadow: inset 0 2px 0 rgba(255,255,255,0.2), 0 4px 0 #b0303c;
-        }
-        .habbo-btn-red:active {
-            transform: translateY(2px);
-            box-shadow: inset 0 2px 0 rgba(255,255,255,0.2), 0 2px 0 #b0303c;
-        }
-
-        .habbo-btn-green {
-            background-color: #00b37e;
-            box-shadow: inset 0 2px 0 rgba(255,255,255,0.2), 0 4px 0 #006648;
-        }
-        .habbo-btn-green:active {
-            transform: translateY(2px);
-            box-shadow: inset 0 2px 0 rgba(255,255,255,0.2), 0 2px 0 #006648;
-        }
+        .btn-warning { background-color: #e2a03f; color: #fff; }
+        .btn-warning:hover { background-color: #c4862f; }
     </style>
 </head>
-<body class="font-sans antialiased selection:bg-habbo-red selection:text-white min-h-screen flex flex-col justify-between">
+<body>
 
-    <!-- Fundo de Ícones Pixelados Animados -->
     <div class="pixel-bg" id="pixelBg"></div>
 
-    <!-- NAVEGAÇÃO / CABEÇALHO DA MARCA -->
-    <header class="relative z-10 bg-habbo-dark border-b-2 border-habbo-border px-4 py-3 shadow-lg">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-3">
-            <!-- Logotipo da Corporação estilo Habbo RP -->
-            <div class="flex items-center gap-3 cursor-pointer" onclick="showScreen('loginScreen')">
-                <div class="bg-black text-white font-pixel px-3 py-2 text-xl md:text-2xl tracking-tighter border-2 border-white shadow-md">
-                    MERCADO
+    <div class="card-container" id="mainContainer">
+        
+        <div class="header-title">
+            <h1>MERCADO <span>RP</span></h1>
+            <div class="subtitle">Controle Semanal de Produtividade</div>
+        </div>
+
+        <!-- TELA DE LOGIN -->
+        <div id="loginScreen">
+            <div class="input-group">
+                <label for="usernameInput">Seu Nick no Habbo</label>
+                <input type="text" id="usernameInput" class="input-field" placeholder="Ex: Solyta, Chantal..." autocomplete="off">
+            </div>
+
+            <div class="error-message" id="errorMessage">
+                Funcionário não encontrado na lista!
+            </div>
+
+            <button class="btn btn-primary" onclick="loginUser()">Acessar Meu Relatório</button>
+            <button class="btn btn-admin" onclick="showAdminLogin()">Área do Gerente (Tabela Geral)</button>
+        </div>
+
+        <!-- PAINEL INDIVIDUAL DO FUNCIONÁRIO -->
+        <div id="userScreen">
+            <div class="user-header">
+                <div class="info">
+                    <span class="name" id="uName">Solyta</span>
+                    <span class="role" id="uRole">Encarregado de Loja</span>
                 </div>
-                <div>
-                    <h1 class="font-rajdhani font-bold text-lg md:text-xl text-white tracking-wide uppercase leading-none">
-                        Controle Semanal de Produtividade
-                    </h1>
-                    <span class="text-xs text-gray-400 font-mono" id="periodoHeader">Semana Atual: 12/10/2026 à 18/10/2026</span>
+                <button class="btn-logout" onclick="logout()">Sair</button>
+            </div>
+
+            <div class="week-badge" id="weekBadge">
+                Semana Atual: 19/10/2026 à 25/10/2026
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="label">Início da Semana</div>
+                    <div class="val" id="uInitial">1606</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Meta Semanal</div>
+                    <div class="val" id="uMeta">15</div>
                 </div>
             </div>
 
-            <!-- Status do Usuário / Botões Rápidos -->
-            <div id="headerUserStatus" class="hidden items-center gap-3">
-                <div class="flex items-center gap-2 bg-habbo-card px-3 py-1.5 rounded-lg border border-habbo-border">
-                    <img id="userAvatar" src="https://www.habbo.com.br/habbo-imaging/avatarimage?user=Solyta&action=std&direction=2&head_direction=2&gesture=sml&size=m" alt="Avatar" class="w-8 h-8 rounded bg-black/40 p-0.5 border border-gray-700 object-cover">
-                    <div>
-                        <div class="text-xs text-gray-400">Conectado como</div>
-                        <div class="text-sm font-bold text-habbo-green flex items-center gap-1">
-                            <span id="navUserName">Nome</span>
-                            <span id="navUserBadge" class="text-[10px] bg-habbo-red text-white px-1.5 py-0.2 rounded font-mono uppercase">Admin</span>
-                        </div>
-                    </div>
-                </div>
+            <div class="display-group">
+                <div class="display-label">Digite seu Turno Atual</div>
+                <div class="display-value" id="display">0</div>
+            </div>
 
-                <button id="btnAdminView" onclick="showScreen('adminScreen')" class="hidden bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold px-3 py-2 rounded border border-purple-500 transition shadow">
-                    <i class="fa-solid fa-table-list mr-1"></i> Painel Geral
-                </button>
+            <div class="result-box" id="resultBox">
+                <div class="result-title">Sua Situação Nesta Semana</div>
+                <div class="result-text" id="resultText">Turnos Feitos: 0</div>
+            </div>
 
-                <button onclick="logout()" class="bg-red-500/20 hover:bg-red-500/30 text-habbo-red text-xs font-bold px-3 py-2 rounded border border-habbo-red/40 transition">
-                    <i class="fa-solid fa-right-from-bracket mr-1"></i> Sair
-                </button>
+            <div class="keypad">
+                <button class="key" onclick="appendNum('7')">7</button>
+                <button class="key" onclick="appendNum('8')">8</button>
+                <button class="key" onclick="appendNum('9')">9</button>
+                
+                <button class="key" onclick="appendNum('4')">4</button>
+                <button class="key" onclick="appendNum('5')">5</button>
+                <button class="key" onclick="appendNum('6')">6</button>
+                
+                <button class="key" onclick="appendNum('1')">1</button>
+                <button class="key" onclick="appendNum('2')">2</button>
+                <button class="key" onclick="appendNum('3')">3</button>
+                
+                <button class="key" onclick="appendNum('0')">0</button>
+                <button class="key action-c" onclick="clearNum()">C</button>
+                <button class="key" onclick="deleteNum()">⌫</button>
+
+                <button class="key action-ok" onclick="calculateShift()">Calcular Turnos da Semana</button>
             </div>
         </div>
-    </header>
 
-    <!-- CONTEÚDO PRINCIPAL -->
-    <main class="relative z-10 max-w-7xl mx-auto w-full px-4 py-6 flex-grow flex flex-col justify-center items-center">
-
-        <!-- ================= TELA 1: LOGIN / ACESSO ================= -->
-        <section id="loginScreen" class="w-full max-w-md bg-habbo-card habbo-border p-6 rounded-xl shadow-2xl relative backdrop-blur-md">
-            <div class="text-center mb-6">
-                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-black/50 border-2 border-habbo-red mb-3 shadow-inner text-2xl text-habbo-red">
-                    <i class="fa-solid fa-user-gear"></i>
+        <!-- PAINEL ADMIN (TABELA COMPLETA) -->
+        <div id="adminScreen">
+            <div class="user-header">
+                <div class="info">
+                    <span class="name">Painel Administrativo</span>
+                    <span class="role">Gerenciamento de Produtividade</span>
                 </div>
-                <h2 class="text-xl font-bold text-white uppercase tracking-wider font-rajdhani">Acesso ao Operacional</h2>
-                <p class="text-xs text-gray-400 mt-1">Informe seu Nickname do Habbo para carregar seus dados e calculadora.</p>
+                <button class="btn-logout" onclick="logout()">Sair</button>
             </div>
 
-            <form onsubmit="event.preventDefault(); handleLogin();" class="space-y-4">
+            <div class="admin-controls">
                 <div>
-                    <label for="inputNick" class="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-1">
-                        Habbo Username / Nick:
-                    </label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
-                            <i class="fa-solid fa-at"></i>
-                        </span>
-                        <input type="text" id="inputNick" placeholder="Ex: Solyta, Chantal, Afrontoso..." 
-                            class="w-full bg-black/60 border border-habbo-border focus:border-habbo-red rounded-lg pl-9 pr-3 py-2.5 text-white placeholder-gray-600 outline-none transition text-sm font-semibold">
-                    </div>
+                    <strong>Semana Ativa:</strong> <span id="adminWeekText">19/10/2026 à 25/10/2026</span>
                 </div>
-
-                <div id="loginError" class="hidden text-xs text-habbo-red bg-habbo-red/10 border border-habbo-red/30 p-2.5 rounded text-center">
-                    Usuário não encontrado. Digite um nickname válido ou acesse pelo Painel Geral.
-                </div>
-
-                <button type="submit" class="w-full habbo-btn-red text-white font-bold py-3 px-4 rounded-lg text-sm uppercase tracking-wider transition">
-                    <i class="fa-solid fa-right-to-bracket mr-2"></i> Entrar no Meu Painel
-                </button>
-            </form>
-
-            <div class="mt-6 pt-4 border-t border-habbo-border text-center flex flex-col gap-2">
-                <button onclick="promptAdminPass()" class="text-xs text-gray-400 hover:text-white transition flex items-center justify-center gap-1">
-                    <i class="fa-solid fa-lock text-habbo-yellow"></i> Acesso Administrativo (Painel de Gestão Completo)
-                </button>
-            </div>
-        </section>
-
-
-        <!-- ================= TELA 2: PAINEL PESSOAL DO FUNCIONÁRIO ================= -->
-        <section id="userScreen" class="hidden w-full max-w-4xl space-y-6">
-            <!-- Card de Perfil Pessoal -->
-            <div class="bg-habbo-card habbo-border p-5 rounded-xl flex flex-col md:flex-row items-center justify-between gap-4 shadow-xl">
-                <div class="flex items-center gap-4 text-center md:text-left">
-                    <div class="relative">
-                        <img id="userCardAvatar" src="" alt="Avatar" class="w-20 h-24 bg-black/60 rounded-lg border-2 border-habbo-border object-cover p-1">
-                        <span id="userBadgeRole" class="absolute -bottom-2 inset-x-0 mx-auto w-max text-[10px] font-bold bg-habbo-red text-white px-2 py-0.5 rounded shadow uppercase">
-                            Cargo
-                        </span>
-                    </div>
-                    <div>
-                        <h2 class="text-2xl font-bold text-white font-rajdhani tracking-wide" id="userCardName">Nome do Funcionário</h2>
-                        <div class="text-xs text-gray-400 mt-0.5 flex flex-wrap gap-x-3 gap-y-1 justify-center md:justify-start">
-                            <span><i class="fa-solid fa-briefcase text-habbo-red mr-1"></i><span id="userCardRoleText">Balconista</span></span>
-                            <span><i class="fa-solid fa-calendar text-habbo-green mr-1"></i><span id="userCardPeriod">12/10/2026 à 18/10/2026</span></span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Resumo Rápido da Semana -->
-                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 w-full md:w-auto">
-                    <div class="bg-black/50 border border-habbo-border p-2.5 rounded-lg text-center">
-                        <div class="text-[10px] text-gray-400 uppercase font-bold">Turno Inicial</div>
-                        <div class="text-lg font-bold text-blue-400" id="userCardInitial">0</div>
-                    </div>
-                    <div class="bg-black/50 border border-habbo-border p-2.5 rounded-lg text-center">
-                        <div class="text-[10px] text-gray-400 uppercase font-bold">Meta Semanal</div>
-                        <div class="text-lg font-bold text-habbo-yellow" id="userCardMeta">15</div>
-                    </div>
-                    <div class="bg-black/50 border border-habbo-border p-2.5 rounded-lg text-center col-span-2 sm:col-span-1">
-                        <div class="text-[10px] text-gray-400 uppercase font-bold">Status Meta</div>
-                        <div class="text-xs font-bold mt-1" id="userCardStatusBadge">
-                            <span class="text-red-400">Pendente</span>
-                        </div>
-                    </div>
+                <div style="display:flex; gap:8px;">
+                    <button class="btn btn-warning btn-sm" onclick="advanceWeek()">🔄 Virar Próxima Semana</button>
+                    <button class="btn btn-success btn-sm" onclick="addNewEmployeePrompt()">+ Add Funcionário</button>
                 </div>
             </div>
 
-            <!-- Calculadora Numérica de Turnos Atuais -->
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <!-- Calculadora / Keypad -->
-                <div class="lg:col-span-7 bg-habbo-card habbo-border p-5 rounded-xl shadow-xl flex flex-col justify-between">
-                    <div>
-                        <div class="flex justify-between items-center mb-4 pb-2 border-b border-habbo-border">
-                            <h3 class="text-base font-bold text-white uppercase font-rajdhani flex items-center gap-2">
-                                <i class="fa-solid fa-calculator text-habbo-red"></i> Calculadora de Turnos Atuais
-                            </h3>
-                            <span class="text-xs text-gray-400">Digite seu total exibido no jogo</span>
-                        </div>
-
-                        <!-- Visor de Entrada -->
-                        <div class="bg-black/80 border-2 border-habbo-border rounded-lg p-3 mb-4">
-                            <div class="text-[10px] text-gray-400 uppercase tracking-wider mb-1 flex justify-between">
-                                <span>Turno Atual no Habbo RP:</span>
-                                <span class="text-habbo-green font-mono">Digite no teclado abaixo</span>
-                            </div>
-                            <div class="text-3xl font-mono font-bold text-right text-habbo-green tracking-wider min-h-[40px] flex items-center justify-end overflow-x-auto" id="calcDisplay">
-                                0
-                            </div>
-                        </div>
-
-                        <!-- Teclado Numérico -->
-                        <div class="grid grid-cols-3 gap-2">
-                            <button onclick="calcInput('7')" class="bg-habbo-border hover:bg-gray-700 text-white font-bold py-3 text-lg rounded-lg transition active:scale-95">7</button>
-                            <button onclick="calcInput('8')" class="bg-habbo-border hover:bg-gray-700 text-white font-bold py-3 text-lg rounded-lg transition active:scale-95">8</button>
-                            <button onclick="calcInput('9')" class="bg-habbo-border hover:bg-gray-700 text-white font-bold py-3 text-lg rounded-lg transition active:scale-95">9</button>
-
-                            <button onclick="calcInput('4')" class="bg-habbo-border hover:bg-gray-700 text-white font-bold py-3 text-lg rounded-lg transition active:scale-95">4</button>
-                            <button onclick="calcInput('5')" class="bg-habbo-border hover:bg-gray-700 text-white font-bold py-3 text-lg rounded-lg transition active:scale-95">5</button>
-                            <button onclick="calcInput('6')" class="bg-habbo-border hover:bg-gray-700 text-white font-bold py-3 text-lg rounded-lg transition active:scale-95">6</button>
-
-                            <button onclick="calcInput('1')" class="bg-habbo-border hover:bg-gray-700 text-white font-bold py-3 text-lg rounded-lg transition active:scale-95">1</button>
-                            <button onclick="calcInput('2')" class="bg-habbo-border hover:bg-gray-700 text-white font-bold py-3 text-lg rounded-lg transition active:scale-95">2</button>
-                            <button onclick="calcInput('3')" class="bg-habbo-border hover:bg-gray-700 text-white font-bold py-3 text-lg rounded-lg transition active:scale-95">3</button>
-
-                            <button onclick="calcInput('0')" class="bg-habbo-border hover:bg-gray-700 text-white font-bold py-3 text-lg rounded-lg transition active:scale-95">0</button>
-                            <button onclick="calcClear()" class="bg-habbo-red/20 hover:bg-habbo-red/30 text-habbo-red font-bold py-3 text-lg rounded-lg transition active:scale-95">C</button>
-                            <button onclick="calcBackspace()" class="bg-habbo-border hover:bg-gray-700 text-white font-bold py-3 text-lg rounded-lg transition active:scale-95">⌫</button>
-                        </div>
-                    </div>
-
-                    <div class="mt-4 pt-3 border-t border-habbo-border flex gap-2">
-                        <button onclick="saveUserTurnoCurrent()" class="w-full habbo-btn-green text-white font-bold py-3 rounded-lg text-sm uppercase tracking-wider transition">
-                            <i class="fa-solid fa-check mr-1"></i> Salvar Turno Atual
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Painel de Resultados do Cálculo -->
-                <div class="lg:col-span-5 bg-habbo-card habbo-border p-5 rounded-xl shadow-xl flex flex-col justify-between">
-                    <div>
-                        <h3 class="text-base font-bold text-white uppercase font-rajdhani mb-4 pb-2 border-b border-habbo-border flex items-center gap-2">
-                            <i class="fa-solid fa-chart-line text-habbo-green"></i> Resultado do Desempenho
-                        </h3>
-
-                        <div class="space-y-4">
-                            <!-- Turnos Feitos na Semana -->
-                            <div class="bg-black/40 border border-habbo-border p-3 rounded-lg flex justify-between items-center">
-                                <div>
-                                    <div class="text-xs text-gray-400 font-bold uppercase">Turnos Feitos Nesta Semana</div>
-                                    <div class="text-[11px] text-gray-500">(Atual - Inicial)</div>
-                                </div>
-                                <div class="text-2xl font-bold text-white font-mono" id="resFeitos">0</div>
-                            </div>
-
-                            <!-- Falta para a Meta -->
-                            <div class="bg-black/40 border border-habbo-border p-3 rounded-lg flex justify-between items-center" id="boxFaltaMeta">
-                                <div>
-                                    <div class="text-xs text-gray-400 font-bold uppercase">Faltam para a Meta</div>
-                                    <div class="text-[11px] text-gray-500">Meta exigida: <span id="resMetaExigida">15</span></div>
-                                </div>
-                                <div class="text-2xl font-bold text-habbo-red font-mono" id="resFalta">15</div>
-                            </div>
-
-                            <!-- Status Box Animado -->
-                            <div id="resStatusBox" class="p-4 rounded-lg border text-center transition-all duration-300 bg-red-950/30 border-red-800/50">
-                                <i class="fa-solid fa-circle-exclamation text-3xl text-habbo-red mb-2" id="resStatusIcon"></i>
-                                <div class="font-bold text-sm text-white uppercase tracking-wide" id="resStatusTitle">Meta Não Alcançada</div>
-                                <div class="text-xs text-gray-300 mt-1" id="resStatusDesc">Continue registrando seus turnos no Mercado RP.</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Botão de Voltar ao topo / Dica -->
-                    <div class="mt-4 text-center">
-                        <span class="text-[11px] text-gray-400 italic">
-                            <i class="fa-solid fa-circle-info mr-1"></i> Seus dados ficam salvos automaticamente no sistema local.
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-
-        <!-- ================= TELA 3: PAINEL ADMINISTRATIVO / TABELA DE GESTÃO ================= -->
-        <section id="adminScreen" class="hidden w-full space-y-6">
-            <!-- Barra Superior do Admin com Controles -->
-            <div class="bg-habbo-card habbo-border p-4 rounded-xl flex flex-col lg:flex-row justify-between items-center gap-4 shadow-xl">
-                <div>
-                    <h2 class="text-xl font-bold text-white font-rajdhani uppercase tracking-wider flex items-center gap-2">
-                        <i class="fa-solid fa-sliders text-habbo-red"></i> Controle Semanal de Produtividade (Gestão)
-                    </h2>
-                    <p class="text-xs text-gray-400">Gerencie todos os funcionários, edite turnos e execute a virada de semana.</p>
-                </div>
-
-                <!-- Botões de Ação do Admin -->
-                <div class="flex flex-wrap items-center gap-2 w-full lg:w-auto justify-end">
-                    <button onclick="openAddEmployeeModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-3.5 py-2.5 rounded-lg border border-blue-500 transition shadow flex items-center gap-1.5">
-                        <i class="fa-solid fa-user-plus"></i> Novo Funcionário
-                    </button>
-
-                    <button onclick="executeVirarSemana()" class="habbo-btn-green text-white font-bold text-xs px-4 py-2.5 rounded-lg transition shadow flex items-center gap-1.5 uppercase">
-                        <i class="fa-solid fa-rotate mr-1"></i> Virar Nova Semana
-                    </button>
-
-                    <button onclick="resetDataToDefault()" class="bg-gray-700 hover:bg-gray-600 text-gray-300 font-bold text-xs px-3 py-2.5 rounded-lg border border-gray-600 transition" title="Restaurar dados originais da imagem">
-                        <i class="fa-solid fa-arrow-rotate-left"></i>
-                    </button>
-                </div>
-            </div>
-
-            <!-- TABELA COMPLETA ESTILIZADA COMO A IMAGEM FORNECIDA -->
-            <div class="bg-habbo-dark habbo-border rounded-xl shadow-2xl overflow-hidden">
-                <!-- Cabeçalho idêntico à imagem -->
-                <div class="bg-black p-4 border-b-2 border-habbo-border flex justify-between items-center">
-                    <div class="flex items-center gap-3">
-                        <span class="bg-white text-black font-pixel text-xl px-2.5 py-1 font-bold">MERCADO</span>
-                        <span class="text-white font-sans text-lg font-light tracking-wide hidden sm:inline">Controle Semanal de Produtividade</span>
-                    </div>
-                    <div class="text-xs text-gray-400 font-mono" id="adminTablePeriodDisplay">
-                        Período: 12/10/2026 à 18/10/2026
-                    </div>
-                </div>
-
-                <!-- Tabela de Dados -->
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-black text-gray-300 text-xs uppercase font-bold border-b border-habbo-border">
-                                <th class="py-3 px-4">Funcionário(a)</th>
-                                <th class="py-3 px-4">Cargo</th>
-                                <th class="py-3 px-4 text-center">Turnos Iniciais</th>
-                                <th class="py-3 px-4 text-center">Turnos Finais</th>
-                                <th class="py-3 px-4 text-center">Turnos Feitos</th>
-                                <th class="py-3 px-4 text-center">Meta</th>
-                                <th class="py-3 px-4 text-center">Meta Alcançada?</th>
-                                <th class="py-3 px-4 text-center">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="adminTableBody" class="divide-y divide-habbo-border/40 text-sm">
-                            <!-- Linhas inseridas via JS -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-    </main>
-
-    <!-- RODAPÉ DA CORPORAÇÃO -->
-    <footer class="relative z-10 border-t border-habbo-border bg-habbo-dark py-4 px-4 text-center text-xs text-gray-500">
-        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
-            <div>Mercado Habbo RP &copy; 2026 - Central de Produção e Controle</div>
-            <div class="flex items-center gap-3">
-                <span class="text-gray-600">Desenvolvido para Habbo RP</span>
+            <div class="table-responsive">
+                <table class="habbo-table">
+                    <thead>
+                        <tr>
+                            <th>Funcionário(a)</th>
+                            <th>Cargo</th>
+                            <th>Turno Inicial</th>
+                            <th>Turno Atual</th>
+                            <th>Feitos</th>
+                            <th>Meta</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Preenchido via JS -->
+                    </tbody>
+                </table>
             </div>
         </div>
-    </footer>
 
-    <!-- MODAL: ADICIONAR / EDITAR FUNCIONÁRIO -->
-    <div id="employeeModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-habbo-card habbo-border w-full max-w-md rounded-xl p-6 shadow-2xl relative">
-            <h3 class="text-lg font-bold text-white uppercase font-rajdhani mb-4 border-b border-habbo-border pb-2" id="modalTitle">
-                Adicionar Novo Funcionário
-            </h3>
-
-            <form id="employeeForm" onsubmit="event.preventDefault(); saveEmployeeModal();" class="space-y-4">
-                <input type="hidden" id="modalEmpId">
-
-                <div>
-                    <label class="block text-xs font-bold text-gray-300 uppercase mb-1">Nickname Habbo:</label>
-                    <input type="text" id="modalEmpName" required class="w-full bg-black/60 border border-habbo-border rounded p-2.5 text-white text-sm outline-none focus:border-habbo-red">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-gray-300 uppercase mb-1">Cargo:</label>
-                    <select id="modalEmpRole" class="w-full bg-black/60 border border-habbo-border rounded p-2.5 text-white text-sm outline-none focus:border-habbo-red">
-                        <option value="Gerente">Gerente</option>
-                        <option value="Supervisor">Supervisor</option>
-                        <option value="Encarregado de Loja">Encarregado de Loja</option>
-                        <option value="Caixa">Caixa</option>
-                        <option value="Balconista">Balconista</option>
-                        <option value="Operador de Loja">Operador de Loja</option>
-                    </select>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-300 uppercase mb-1">Turnos Iniciais:</label>
-                        <input type="number" id="modalEmpInitial" min="0" required class="w-full bg-black/60 border border-habbo-border rounded p-2 text-white text-sm outline-none focus:border-habbo-red">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-300 uppercase mb-1">Turnos Finais:</label>
-                        <input type="number" id="modalEmpFinal" min="0" required class="w-full bg-black/60 border border-habbo-border rounded p-2 text-white text-sm outline-none focus:border-habbo-red">
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-gray-300 uppercase mb-1">Meta Semanal:</label>
-                    <input type="number" id="modalEmpMeta" value="15" min="1" required class="w-full bg-black/60 border border-habbo-border rounded p-2 text-white text-sm outline-none focus:border-habbo-red">
-                </div>
-
-                <div class="flex justify-end gap-2 pt-2 border-t border-habbo-border">
-                    <button type="button" onclick="closeEmployeeModal()" class="bg-gray-700 hover:bg-gray-600 text-white font-bold px-4 py-2 rounded text-xs">Cancelar</button>
-                    <button type="submit" class="habbo-btn-green text-white font-bold px-4 py-2 rounded text-xs uppercase">Salvar Funcionário</button>
-                </div>
-            </form>
-        </div>
     </div>
 
-
-    <!-- JAVASCRIPT PRINCIPAL DA APLICAÇÃO -->
     <script>
-        // DADOS PADRÃO (Baseados exatamente na imagem anexada do Habbo RP - 12/10/2026 a 18/10/2026)
+        // BASE DE DADOS PADRÃO (Conforme relatório do Habbo RP)
         const defaultEmployees = [
-            { id: 1, name: "Afrontoso", role: "Gerente", initial: 3392, final: 3401, meta: 15 },
-            { id: 2, name: "Chantal", role: "Supervisor", initial: 2166, final: 2181, meta: 15 },
-            { id: 3, name: "Monica", role: "Supervisor", initial: 2195, final: 2219, meta: 15 },
-            { id: 4, name: "rxnan", role: "Encarregado de Loja", initial: 172, final: 212, meta: 15 },
-            { id: 5, name: "Solyta", role: "Encarregado de Loja", initial: 1508, final: 1606, meta: 15 },
-            { id: 6, name: "Latim", role: "Encarregado de Loja", initial: 144, final: 144, meta: 15 },
-            { id: 7, name: "Victorgust1", role: "Encarregado de Loja", initial: 237, final: 259, meta: 15 },
-            { id: 8, name: "mayy", role: "Encarregado de Loja", initial: 254, final: 258, meta: 15 },
-            { id: 9, name: "Cachinhos", role: "Encarregado de Loja", initial: 855, final: 855, meta: 15 },
-            { id: 10, name: "JpCooDz", role: "Encarregado de Loja", initial: 36, final: 127, meta: 15 },
-            { id: 11, name: "death - AUS", role: "Caixa", initial: 107, final: 107, meta: 15 },
-            { id: 12, name: "ys", role: "Caixa", initial: 0, final: 80, meta: 15 },
-            { id: 13, name: "deprera", role: "Balconista", initial: 47, final: 51, meta: 15 },
-            { id: 14, name: "HCN", role: "Balconista", initial: 64, final: 64, meta: 15 },
-            { id: 15, name: "Janystar100", role: "Balconista", initial: 0, final: 60, meta: 15 },
-            { id: 16, name: "kyos", role: "Balconista", initial: 0, final: 50, meta: 15 },
-            { id: 17, name: "zfy", role: "Balconista", initial: 0, final: 42, meta: 15 },
-            { id: 18, name: "Achila", role: "Operador de Loja", initial: 0, final: 21, meta: 15 },
-            { id: 19, name: "dg", role: "Operador de Loja", initial: 25, final: 32, meta: 15 },
-            { id: 20, name: "cityhunter", role: "Operador de Loja", initial: 15, final: 17, meta: 15 }
+            { name: "Afrontoso", role: "Gerente", initial: 3401, current: 3401, meta: 15 },
+            { name: "Chantal", role: "Supervisor", initial: 2181, current: 2181, meta: 15 },
+            { name: "Monica", role: "Supervisor", initial: 2219, current: 2219, meta: 15 },
+            { name: "rxnan", role: "Encarregado de Loja", initial: 212, current: 212, meta: 15 },
+            { name: "Solyta", role: "Encarregado de Loja", initial: 1606, current: 1606, meta: 15 },
+            { name: "Latim", role: "Encarregado de Loja", initial: 144, current: 144, meta: 15 },
+            { name: "Victorgust1", role: "Encarregado de Loja", initial: 259, current: 259, meta: 15 },
+            { name: "mayy", role: "Encarregado de Loja", initial: 258, current: 258, meta: 15 },
+            { name: "Cachinhos", role: "Encarregado de Loja", initial: 855, current: 855, meta: 15 },
+            { name: "JpCooDz", role: "Encarregado de Loja", initial: 127, current: 127, meta: 15 },
+            { name: "death - AUS", role: "Caixa", initial: 107, current: 107, meta: 15 },
+            { name: "ys", role: "Caixa", initial: 80, current: 80, meta: 15 },
+            { name: "deprera", role: "Balconista", initial: 51, current: 51, meta: 15 },
+            { name: "HCN", role: "Balconista", initial: 64, current: 64, meta: 15 },
+            { name: "Janystar100", role: "Balconista", initial: 60, current: 60, meta: 15 },
+            { name: "kyos", role: "Balconista", initial: 50, current: 50, meta: 15 },
+            { name: "zfy", role: "Balconista", initial: 42, current: 42, meta: 15 },
+            { name: "Achila", role: "Operador de Loja", initial: 21, current: 21, meta: 15 },
+            { name: "dg", role: "Operador de Loja", initial: 32, current: 32, meta: 15 },
+            { name: "cityhunter", role: "Operador de Loja", initial: 17, current: 17, meta: 15 }
         ];
 
-        // Lista de Usuários Autorizados como Administradores
-        const adminUsers = ["afrontoso", "solyta", "chantal"];
+        // CARREGAR DADOS DO LOCALSTORAGE
+        let employees = JSON.parse(localStorage.getItem("habbo_market_emp")) || defaultEmployees;
+        let currentWeekText = localStorage.getItem("habbo_market_week") || "19/10/2026 à 25/10/2026";
+        let activeUser = null;
+        let currentInput = "0";
 
-        // Estados Globais
-        let employees = [];
-        let currentUser = null;
-        let currentCalcValue = "0";
-
-        // Inicialização ao carregar a página
-        window.onload = function() {
-            initPixelBackground();
-            loadLocalStorageData();
-            renderAdminTable();
-        };
-
-        // Gerador de Animação Pixel no Fundo
-        function initPixelBackground() {
-            const bgContainer = document.getElementById('pixelBg');
-            const bgIcons = ['🛒', '📦', '🪙', '🍎', '🥤', '🍞', '🏬'];
-            
-            for (let i = 0; i < 25; i++) {
-                let icon = document.createElement('div');
-                icon.className = 'pixel-icon';
-                icon.innerText = bgIcons[Math.floor(Math.random() * bgIcons.length)];
-                icon.style.left = Math.random() * 100 + '%';
-                icon.style.animationDuration = (8 + Math.random() * 10) + 's';
-                icon.style.animationDelay = (Math.random() * 6) + 's';
-                bgContainer.appendChild(icon);
-            }
+        // FUNDO PIXEL ANIMADO
+        const bgIcons = ['🛒', '📦', '🪙', '🍎', '🥤', '🍞', '🏬'];
+        const bgContainer = document.getElementById('pixelBg');
+        for (let i = 0; i < 20; i++) {
+            let icon = document.createElement('div');
+            icon.className = 'pixel-icon';
+            icon.innerText = bgIcons[Math.floor(Math.random() * bgIcons.length)];
+            icon.style.left = Math.random() * 100 + '%';
+            icon.style.animationDuration = (6 + Math.random() * 8) + 's';
+            icon.style.animationDelay = (Math.random() * 5) + 's';
+            bgContainer.appendChild(icon);
         }
 
-        // Carregar do localStorage
-        function loadLocalStorageData() {
-            const stored = localStorage.getItem('mercado_habbo_employees');
-            if (stored) {
-                try {
-                    employees = JSON.parse(stored);
-                } catch(e) {
-                    employees = [...defaultEmployees];
-                }
-            } else {
-                employees = [...defaultEmployees];
-                saveToLocalStorage();
-            }
+        // SALVAR ESTADO
+        function saveData() {
+            localStorage.setItem("habbo_market_emp", JSON.stringify(employees));
+            localStorage.setItem("habbo_market_week", currentWeekText);
         }
 
-        function saveToLocalStorage() {
-            localStorage.setItem('mercado_habbo_employees', JSON.stringify(employees));
-        }
+        // LOGIN
+        function loginUser() {
+            const nick = document.getElementById("usernameInput").value.trim().toLowerCase();
+            const errorMsg = document.getElementById("errorMessage");
 
-        function resetDataToDefault() {
-            if (confirm("Deseja restaurar os dados para a tabela original da imagem (12/10 à 18/10)?")) {
-                employees = JSON.parse(JSON.stringify(defaultEmployees));
-                saveToLocalStorage();
-                renderAdminTable();
-                if (currentUser) {
-                    loadUserDashboard(currentUser.name);
-                }
-            }
-        }
-
-        // Navegação de Telas
-        function showScreen(screenId) {
-            document.getElementById('loginScreen').classList.add('hidden');
-            document.getElementById('userScreen').classList.add('hidden');
-            document.getElementById('adminScreen').classList.add('hidden');
-
-            document.getElementById(screenId).classList.remove('hidden');
-
-            const headerUserStatus = document.getElementById('headerUserStatus');
-            if (currentUser) {
-                headerUserStatus.classList.remove('hidden');
-                headerUserStatus.classList.add('flex');
-            } else {
-                headerUserStatus.classList.add('hidden');
-                headerUserStatus.classList.remove('flex');
-            }
-        }
-
-        // Sistema de Login
-        function handleLogin() {
-            const inputNick = document.getElementById('inputNick').value.trim();
-            const loginError = document.getElementById('loginError');
-
-            if (!inputNick) {
-                loginError.innerText = "Por favor, informe seu nickname.";
-                loginError.classList.remove('hidden');
+            if (!nick) {
+                errorMsg.innerText = "Por favor, digite seu nickname!";
+                errorMsg.style.display = "block";
                 return;
             }
 
-            // Buscar usuário (Case insensitive)
-            const emp = employees.find(e => e.name.toLowerCase() === inputNick.toLowerCase());
+            const found = employees.find(e => e.name.toLowerCase() === nick);
 
-            if (emp) {
-                loginError.classList.add('hidden');
-                currentUser = emp;
-                setupHeaderUser();
-                loadUserDashboard(emp.name);
-                showScreen('userScreen');
+            if (found) {
+                activeUser = found;
+                errorMsg.style.display = "none";
+                document.getElementById("loginScreen").style.display = "none";
+                document.getElementById("userScreen").style.display = "block";
+
+                document.getElementById("uName").innerText = found.name;
+                document.getElementById("uRole").innerText = found.role;
+                document.getElementById("uInitial").innerText = found.initial;
+                document.getElementById("uMeta").innerText = found.meta;
+                document.getElementById("weekBadge").innerText = "Semana Atual: " + currentWeekText;
+                
+                currentInput = "0";
+                updateDisplay();
+                calculateShift();
             } else {
-                loginError.innerText = `Funcionário "${inputNick}" não encontrado no relatório semanal.`;
-                loginError.classList.remove('hidden');
+                errorMsg.innerText = "Funcionário não encontrado na lista!";
+                errorMsg.style.display = "block";
             }
         }
 
-        function promptAdminPass() {
-            const pass = prompt("Informe a senha de Administrador (Padrão: admin123):");
-            if (pass === "admin123" || pass === "admin") {
-                currentUser = {
-                    name: "Administrador",
-                    role: "Gerente",
-                    isAdmin: true
-                };
-                setupHeaderUser();
+        function showAdminLogin() {
+            const pass = prompt("Digite a senha de administrador ou seu nick de gerente:");
+            if (pass && (pass === "admin123" || ["afrontoso", "solyta", "chantal"].includes(pass.toLowerCase()))) {
+                document.getElementById("loginScreen").style.display = "none";
+                document.getElementById("adminScreen").style.display = "block";
+                document.getElementById("mainContainer").classList.add("wide");
+                document.getElementById("adminWeekText").innerText = currentWeekText;
                 renderAdminTable();
-                showScreen('adminScreen');
-            } else if (pass !== null) {
-                alert("Senha incorreta!");
-            }
-        }
-
-        function setupHeaderUser() {
-            if (!currentUser) return;
-
-            const isAuthAdmin = adminUsers.includes(currentUser.name.toLowerCase()) || currentUser.isAdmin;
-            
-            document.getElementById('navUserName').innerText = currentUser.name;
-            document.getElementById('userAvatar').src = `https://www.habbo.com.br/habbo-imaging/avatarimage?user=${currentUser.name}&action=std&direction=2&head_direction=2&gesture=sml&size=m`;
-            
-            const badge = document.getElementById('navUserBadge');
-            const btnAdminView = document.getElementById('btnAdminView');
-
-            if (isAuthAdmin) {
-                badge.innerText = "Admin";
-                badge.className = "text-[10px] bg-habbo-red text-white px-1.5 py-0.2 rounded font-mono uppercase";
-                btnAdminView.classList.remove('hidden');
-            } else {
-                badge.innerText = "Membro";
-                badge.className = "text-[10px] bg-gray-700 text-gray-300 px-1.5 py-0.2 rounded font-mono uppercase";
-                btnAdminView.classList.add('hidden');
+            } else if (pass) {
+                alert("Acesso negado!");
             }
         }
 
         function logout() {
-            currentUser = null;
-            document.getElementById('inputNick').value = "";
-            showScreen('loginScreen');
+            activeUser = null;
+            document.getElementById("userScreen").style.display = "none";
+            document.getElementById("adminScreen").style.display = "none";
+            document.getElementById("loginScreen").style.display = "flex";
+            document.getElementById("mainContainer").classList.remove("wide");
+            document.getElementById("usernameInput").value = "";
         }
 
-        // Dashboard do Funcionário Pessoal
-        function loadUserDashboard(empName) {
-            const emp = employees.find(e => e.name.toLowerCase() === empName.toLowerCase());
-            if (!emp) return;
+        // TECLADO E CÁLCULO FUNCIONÁRIO
+        const display = document.getElementById("display");
 
-            currentUser = emp;
-            document.getElementById('userCardName').innerText = emp.name;
-            document.getElementById('userCardRoleText').innerText = emp.role;
-            document.getElementById('userBadgeRole').innerText = emp.role;
-            document.getElementById('userCardInitial').innerText = emp.initial;
-            document.getElementById('userCardMeta').innerText = emp.meta;
-            document.getElementById('userCardAvatar').src = `https://www.habbo.com.br/habbo-imaging/avatarimage?user=${emp.name}&action=std&direction=2&head_direction=2&gesture=sml&size=l`;
-
-            // Definir o valor inicial da calculadora com o valor atual (se houver)
-            currentCalcValue = (emp.final >= emp.initial) ? emp.final.toString() : emp.initial.toString();
-            updateCalcDisplay();
-            recalculateUserTurnos();
+        function updateDisplay() {
+            display.innerText = currentInput;
         }
 
-        // Lógica do Keypad da Calculadora
-        function calcInput(digit) {
-            if (currentCalcValue === "0") {
-                currentCalcValue = digit;
+        function appendNum(num) {
+            if (currentInput === "0") currentInput = num;
+            else currentInput += num;
+            updateDisplay();
+        }
+
+        function clearNum() {
+            currentInput = "0";
+            updateDisplay();
+        }
+
+        function deleteNum() {
+            if (currentInput.length > 1) currentInput = currentInput.slice(0, -1);
+            else currentInput = "0";
+            updateDisplay();
+        }
+
+        function calculateShift() {
+            let currVal = parseInt(currentInput);
+            if (isNaN(currVal)) currVal = activeUser.initial;
+
+            let feitos = currVal - activeUser.initial;
+            if (feitos < 0) feitos = 0;
+
+            let faltando = activeUser.meta - feitos;
+            const resBox = document.getElementById("resultBox");
+            const resText = document.getElementById("resultText");
+
+            // Atualiza no banco local
+            activeUser.current = currVal;
+            saveData();
+
+            if (faltando > 0) {
+                resBox.className = "result-box danger";
+                resText.innerHTML = `Feitos: <span style="color:#ffffff;">${feitos}</span><br><span style="color:#f75a68;">Faltam ${faltando} turnos para a meta</span>`;
             } else {
-                currentCalcValue += digit;
-            }
-            updateCalcDisplay();
-            recalculateUserTurnos();
-        }
-
-        function calcClear() {
-            currentCalcValue = "0";
-            updateCalcDisplay();
-            recalculateUserTurnos();
-        }
-
-        function calcBackspace() {
-            if (currentCalcValue.length > 1) {
-                currentCalcValue = currentCalcValue.slice(0, -1);
-            } else {
-                currentCalcValue = "0";
-            }
-            updateCalcDisplay();
-            recalculateUserTurnos();
-        }
-
-        function updateCalcDisplay() {
-            document.getElementById('calcDisplay').innerText = currentCalcValue;
-        }
-
-        function recalculateUserTurnos() {
-            if (!currentUser) return;
-
-            const finalTurno = parseInt(currentCalcValue) || 0;
-            const inicial = currentUser.initial;
-            const meta = currentUser.meta;
-
-            const feitos = Math.max(0, finalTurno - inicial);
-            const falta = Math.max(0, meta - feitos);
-            const alcançada = feitos >= meta;
-
-            document.getElementById('resFeitos').innerText = feitos;
-            document.getElementById('resFalta').innerText = falta;
-            document.getElementById('resMetaExigida').innerText = meta;
-
-            const badge = document.getElementById('userCardStatusBadge');
-            const statusBox = document.getElementById('resStatusBox');
-            const statusIcon = document.getElementById('resStatusIcon');
-            const statusTitle = document.getElementById('resStatusTitle');
-            const statusDesc = document.getElementById('resStatusDesc');
-
-            if (alcançada) {
-                badge.innerHTML = `<span class="bg-habbo-green/20 text-habbo-green border border-habbo-green/40 px-2 py-0.5 rounded">🎉 Alcançada</span>`;
-                
-                statusBox.className = "p-4 rounded-lg border text-center transition-all duration-300 bg-green-950/30 border-green-800/50";
-                statusIcon.className = "fa-solid fa-circle-check text-3xl text-habbo-green mb-2";
-                statusTitle.innerText = "Parabéns! Meta Batida";
-                statusDesc.innerText = `Você atingiu os ${meta} turnos exigidos para a semana atual.`;
-            } else {
-                badge.innerHTML = `<span class="bg-habbo-red/20 text-habbo-red border border-habbo-red/40 px-2 py-0.5 rounded">Pendente (${falta} restam)</span>`;
-                
-                statusBox.className = "p-4 rounded-lg border text-center transition-all duration-300 bg-red-950/30 border-red-800/50";
-                statusIcon.className = "fa-solid fa-circle-exclamation text-3xl text-habbo-red mb-2";
-                statusTitle.innerText = `Faltam ${falta} turnos`;
-                statusDesc.innerText = `Você concluiu ${feitos} de ${meta} turnos requeridos nesta semana.`;
+                resBox.className = "result-box";
+                resText.innerHTML = `Feitos: <span style="color:#ffffff;">${feitos}</span><br><span style="color:#00b37e;">🎉 Meta Semanal Batida!</span>`;
             }
         }
 
-        function saveUserTurnoCurrent() {
-            if (!currentUser) return;
-            const finalValue = parseInt(currentCalcValue) || 0;
-            
-            const empIndex = employees.findIndex(e => e.id === currentUser.id);
-            if (empIndex !== -1) {
-                employees[empIndex].final = finalValue;
-                currentUser.final = finalValue;
-                saveToLocalStorage();
-                renderAdminTable();
-                alert(`Turno Atual (${finalValue}) salvo com sucesso!`);
-            }
-        }
-
-        // Renderizar Tabela do Painel Administrativo
+        // FUNÇÕES DO PAINEL ADMIN
         function renderAdminTable() {
-            const tbody = document.getElementById('adminTableBody');
+            const tbody = document.getElementById("tableBody");
             tbody.innerHTML = "";
 
-            employees.forEach(emp => {
-                const feitos = Math.max(0, emp.final - emp.initial);
-                const alcanced = feitos >= emp.meta;
+            employees.forEach((emp, index) => {
+                let feitos = emp.current - emp.initial;
+                if (feitos < 0) feitos = 0;
+                let alcançou = feitos >= emp.meta;
 
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-habbo-card/50 transition";
-
+                let tr = document.createElement("tr");
                 tr.innerHTML = `
-                    <td class="py-3 px-4 font-bold text-white flex items-center gap-2">
-                        <img src="https://www.habbo.com.br/habbo-imaging/avatarimage?user=${emp.name}&action=std&direction=2&head_direction=2&gesture=sml&size=s" class="w-6 h-6 bg-black/50 rounded border border-gray-700">
-                        <span>${emp.name}</span>
+                    <td><strong>${emp.name}</strong></td>
+                    <td>${emp.role}</td>
+                    <td>${emp.initial}</td>
+                    <td>
+                        <input type="number" class="editable-input" value="${emp.current}" onchange="updateEmpCurrent(${index}, this.value)">
                     </td>
-                    <td class="py-3 px-4 text-gray-300">${emp.role}</td>
-                    <td class="py-3 px-4 text-center font-mono font-bold text-blue-400">${emp.initial}</td>
-                    <td class="py-3 px-4 text-center font-mono font-bold text-habbo-green">
-                        <input type="number" value="${emp.final}" min="0" onchange="updateEmpFinalInline(${emp.id}, this.value)"
-                            class="w-20 bg-black/60 border border-habbo-border rounded text-center text-white py-1 font-mono focus:border-habbo-green outline-none">
+                    <td><strong>${feitos}</strong></td>
+                    <td>
+                        <input type="number" class="editable-input" value="${emp.meta}" onchange="updateEmpMeta(${index}, this.value)">
                     </td>
-                    <td class="py-3 px-4 text-center font-mono font-bold text-white">${feitos}</td>
-                    <td class="py-3 px-4 text-center font-mono text-gray-400">${emp.meta}</td>
-                    <td class="py-3 px-4 text-center">
-                        ${alcanced ? 
-                            `<span class="inline-flex items-center gap-1 bg-green-950/80 text-habbo-green border border-green-700/60 text-xs font-bold px-2.5 py-1 rounded">
-                                <i class="fa-solid fa-check-square"></i> Alcançada
-                            </span>` : 
-                            `<span class="inline-flex items-center gap-1 bg-red-950/80 text-habbo-red border border-red-700/60 text-xs font-bold px-2.5 py-1 rounded">
-                                <i class="fa-regular fa-square"></i> Não alcançada
-                            </span>`
-                        }
+                    <td>
+                        <span class="badge-status ${alcançou ? 'badge-success' : 'badge-danger'}">
+                            ${alcançou ? 'Alcançada' : 'Não alcançada'}
+                        </span>
                     </td>
-                    <td class="py-3 px-4 text-center">
-                        <div class="flex justify-center items-center gap-1">
-                            <button onclick="openEditEmployeeModal(${emp.id})" class="text-blue-400 hover:text-blue-300 p-1.5 rounded hover:bg-blue-500/10" title="Editar">
-                                <i class="fa-solid fa-pen-to-square"></i>
-                            </button>
-                            <button onclick="deleteEmployee(${emp.id})" class="text-habbo-red hover:text-red-400 p-1.5 rounded hover:bg-red-500/10" title="Excluir">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </button>
-                        </div>
+                    <td>
+                        <button class="btn btn-admin btn-sm" onclick="removeEmp(${index})">❌</button>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
-        function updateEmpFinalInline(id, newFinal) {
-            const val = parseInt(newFinal) || 0;
-            const emp = employees.find(e => e.id === id);
-            if (emp) {
-                emp.final = val;
-                saveToLocalStorage();
-                renderAdminTable();
-            }
-        }
-
-        // Executar a Ação de Virar Semana
-        function executeVirarSemana() {
-            if (confirm("ATENÇÃO: Deseja virar a semana?\n\nIsso atualizará o 'Turno Inicial' de TODOS os funcionários com o seu 'Turno Final' atual e reiniciará a produtividade para a nova semana.")) {
-                employees.forEach(emp => {
-                    emp.initial = emp.final; // O final vira o novo inicial
-                });
-                
-                saveToLocalStorage();
-                renderAdminTable();
-
-                if (currentUser) {
-                    loadUserDashboard(currentUser.name);
-                }
-
-                alert("Semana atualizada com sucesso! Todos os turnos iniciais foram renovados.");
-            }
-        }
-
-        // Modal de Funcionário (Adicionar / Editar)
-        function openAddEmployeeModal() {
-            document.getElementById('modalTitle').innerText = "Adicionar Novo Funcionário";
-            document.getElementById('modalEmpId').value = "";
-            document.getElementById('modalEmpName').value = "";
-            document.getElementById('modalEmpRole').value = "Balconista";
-            document.getElementById('modalEmpInitial').value = "0";
-            document.getElementById('modalEmpFinal').value = "0";
-            document.getElementById('modalEmpMeta').value = "15";
-
-            document.getElementById('employeeModal').classList.remove('hidden');
-        }
-
-        function openEditEmployeeModal(id) {
-            const emp = employees.find(e => e.id === id);
-            if (!emp) return;
-
-            document.getElementById('modalTitle').innerText = "Editar Funcionário";
-            document.getElementById('modalEmpId').value = emp.id;
-            document.getElementById('modalEmpName').value = emp.name;
-            document.getElementById('modalEmpRole').value = emp.role;
-            document.getElementById('modalEmpInitial').value = emp.initial;
-            document.getElementById('modalEmpFinal').value = emp.final;
-            document.getElementById('modalEmpMeta').value = emp.meta;
-
-            document.getElementById('employeeModal').classList.remove('hidden');
-        }
-
-        function closeEmployeeModal() {
-            document.getElementById('employeeModal').classList.add('hidden');
-        }
-
-        function saveEmployeeModal() {
-            const idVal = document.getElementById('modalEmpId').value;
-            const name = document.getElementById('modalEmpName').value.trim();
-            const role = document.getElementById('modalEmpRole').value;
-            const initial = parseInt(document.getElementById('modalEmpInitial').value) || 0;
-            const final = parseInt(document.getElementById('modalEmpFinal').value) || 0;
-            const meta = parseInt(document.getElementById('modalEmpMeta').value) || 15;
-
-            if (!name) return;
-
-            if (idVal) {
-                // Editar existente
-                const id = parseInt(idVal);
-                const emp = employees.find(e => e.id === id);
-                if (emp) {
-                    emp.name = name;
-                    emp.role = role;
-                    emp.initial = initial;
-                    emp.final = final;
-                    emp.meta = meta;
-                }
-            } else {
-                // Novo registro
-                const newId = employees.length > 0 ? Math.max(...employees.map(e => e.id)) + 1 : 1;
-                employees.push({
-                    id: newId,
-                    name: name,
-                    role: role,
-                    initial: initial,
-                    final: final,
-                    meta: meta
-                });
-            }
-
-            saveToLocalStorage();
+        function updateEmpCurrent(index, val) {
+            employees[index].current = parseInt(val) || employees[index].initial;
+            saveData();
             renderAdminTable();
-            closeEmployeeModal();
         }
 
-        function deleteEmployee(id) {
-            const emp = employees.find(e => e.id === id);
-            if (!emp) return;
+        function updateEmpMeta(index, val) {
+            employees[index].meta = parseInt(val) || 15;
+            saveData();
+            renderAdminTable();
+        }
 
-            if (confirm(`Tem certeza que deseja remover ${emp.name} do controle semanal?`)) {
-                employees = employees.filter(e => e.id !== id);
-                saveToLocalStorage();
+        function removeEmp(index) {
+            if (confirm(`Remover ${employees[index].name} da lista?`)) {
+                employees.splice(index, 1);
+                saveData();
                 renderAdminTable();
             }
         }
+
+        function addNewEmployeePrompt() {
+            const name = prompt("Nome do Funcionário:");
+            if (!name) return;
+            const role = prompt("Cargo:", "Operador de Loja") || "Operador de Loja";
+            const initial = parseInt(prompt("Turno Inicial:", "0")) || 0;
+
+            employees.push({
+                name: name.trim(),
+                role: role.trim(),
+                initial: initial,
+                current: initial,
+                meta: 15
+            });
+
+            saveData();
+            renderAdminTable();
+        }
+
+        // VIRAR SEMANA (Turnos Finais viram Iniciais)
+        function advanceWeek() {
+            if (confirm("Deseja virar a semana? Os turnos atuais se tornarão o novo Turno Inicial de cada funcionário para a próxima semana!")) {
+                employees.forEach(emp => {
+                    emp.initial = emp.current; // O turno final da semana passada vira o inicial da nova
+                });
+
+                const newWeek = prompt("Digite o período da nova semana:", "26/10/2026 à 01/11/2026");
+                if (newWeek) {
+                    currentWeekText = newWeek;
+                }
+
+                saveData();
+                document.getElementById("adminWeekText").innerText = currentWeekText;
+                renderAdminTable();
+                alert("Semana atualizada com sucesso!");
+            }
+        }
+
+        // Permite usar a tecla Enter no login
+        document.getElementById("usernameInput").addEventListener("keypress", function(e) {
+            if (e.key === "Enter") loginUser();
+        });
     </script>
 </body>
 </html>
