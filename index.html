@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mercado Habbo RP - Controle de Turnos</title>
-    <!-- html2canvas para geração de imagens limpas e compatíveis com celular -->
+    <title>Mercado Habbo RP - Painel Operacional</title>
+    <!-- html2canvas para exportar imagens limpas da tabela -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         * {
@@ -15,17 +15,19 @@
         }
 
         body {
-            background: #0f0f1d linear-gradient(135deg, #0d0e15 0%, #1a1c2e 100%);
+            background-color: #0d0608;
+            background-image: radial-gradient(circle at 50% 0%, #2a0e14 0%, #0d0608 70%);
             color: #e1e1e6;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            padding: 16px;
+            padding: 20px 10px;
             overflow-x: hidden;
             position: relative;
         }
 
+        /* Fundo Pixel de Ícones */
         .pixel-bg {
             position: fixed;
             top: 0;
@@ -39,116 +41,331 @@
 
         .pixel-icon {
             position: absolute;
-            font-size: 24px;
-            opacity: 0.15;
+            font-size: 22px;
+            opacity: 0.12;
             animation: floatDown linear infinite;
         }
 
         @keyframes floatDown {
             0% { transform: translateY(-50px) rotate(0deg); opacity: 0; }
-            10% { opacity: 0.2; }
-            90% { opacity: 0.2; }
+            10% { opacity: 0.18; }
+            90% { opacity: 0.18; }
             100% { transform: translateY(105vh) rotate(360deg); opacity: 0; }
         }
 
-        .card-container {
-            background-color: rgba(32, 32, 36, 0.96);
-            border: 2px solid #323238;
-            border-radius: 12px;
+        .main-wrapper {
             width: 100%;
-            max-width: 420px;
-            padding: 24px;
-            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.7);
+            max-width: 440px;
             z-index: 10;
-            position: relative;
-            backdrop-filter: blur(8px);
             transition: max-width 0.3s ease;
         }
 
-        .card-container.wide {
+        .main-wrapper.wide {
             max-width: 1100px;
         }
 
-        .header-title {
+        /* Estilo Painel Operacional Original */
+        .panel-card {
+            background-color: #170a0e;
+            border: 1px solid #3d151d;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            margin-bottom: 16px;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            border-bottom: 1px solid #2d1117;
+            padding-bottom: 12px;
+        }
+
+        .panel-header h1 {
+            font-size: 1.25rem;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .panel-header h1 span {
+            color: #f75a68;
+        }
+
+        .badge-live {
+            font-size: 0.65rem;
+            color: #f75a68;
+            background: rgba(247, 90, 104, 0.15);
+            border: 1px solid rgba(247, 90, 104, 0.3);
+            padding: 3px 8px;
+            border-radius: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .badge-live::before {
+            content: "";
+            width: 6px;
+            height: 6px;
+            background-color: #f75a68;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        /* Seções de Informação */
+        .section-title {
+            font-size: 0.72rem;
+            color: #f75a68;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 700;
+        }
+
+        .section-title::before {
+            content: "■";
+            font-size: 0.6rem;
+        }
+
+        /* Perfil do Jogador estilo Habbo */
+        .profile-box {
+            background-color: #110709;
+            border: 1px solid #280f14;
+            border-radius: 6px;
+            padding: 14px;
+            display: flex;
+            gap: 14px;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .avatar-frame {
+            width: 64px;
+            height: 80px;
+            background: #1a0b0f url('https://www.habbo.com.br/habbo-imaging/avatarimage?user=Solyta&action=std&direction=2&head_direction=2&gesture=sml&size=m') center no-repeat;
+            border: 1px solid #3d151d;
+            border-radius: 6px;
+            flex-shrink: 0;
+        }
+
+        .profile-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px 12px;
+            width: 100%;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-item .lbl {
+            font-size: 0.65rem;
+            color: #8c7076;
+            text-transform: uppercase;
+        }
+
+        .info-item .val {
+            font-size: 0.9rem;
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        .role-tag {
+            background: #f75a68;
+            color: #ffffff;
+            font-size: 0.65rem;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 3px;
+            display: inline-block;
+            margin-top: 2px;
+            text-transform: uppercase;
+            width: fit-content;
+        }
+
+        /* Destaque / Responsável da Semana */
+        .supervisor-card {
+            background: #110709;
+            border: 1px solid #280f14;
+            border-radius: 6px;
+            padding: 12px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .supervisor-card .resp-name {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #f75a68;
+        }
+
+        .supervisor-card .resp-sub {
+            font-size: 0.7rem;
+            color: #8c7076;
+        }
+
+        /* Progresso de Promoção */
+        .promo-bar-container {
+            background-color: #110709;
+            border: 1px solid #280f14;
+            border-radius: 6px;
+            padding: 10px 12px;
+            margin-bottom: 16px;
+        }
+
+        .promo-bar-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.72rem;
+            color: #a8a8b3;
+            margin-bottom: 6px;
+        }
+
+        .promo-bar-bg {
+            background-color: #200d12;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .promo-bar-fill {
+            background: linear-gradient(90deg, #f75a68 0%, #ff8591 100%);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Displays e Teclado */
+        .display-box {
+            background-color: #110709;
+            border: 1px solid #280f14;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 14px;
+        }
+
+        .display-lbl {
+            font-size: 0.68rem;
+            color: #8c7076;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .display-val {
+            font-size: 1.8rem;
+            text-align: right;
+            color: #00b37e;
+            font-weight: bold;
+            min-height: 40px;
+        }
+
+        .result-card {
+            background-color: #110709;
+            border: 1px dashed #00b37e;
+            border-radius: 6px;
+            padding: 12px;
             text-align: center;
             margin-bottom: 16px;
         }
 
-        .header-title h1 {
-            font-size: 1.4rem;
-            color: #ffffff;
+        .result-card.danger {
+            border-color: #f75a68;
+        }
+
+        .result-card .res-title {
+            font-size: 0.68rem;
+            color: #8c7076;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
         }
 
-        .header-title h1 span {
-            background-color: #ffffff;
-            color: #000000;
-            padding: 2px 8px;
-            font-weight: 900;
-            border-radius: 3px;
-        }
-
-        .header-title .subtitle {
-            font-size: 0.85rem;
-            color: #a8a8b3;
+        .result-card .res-val {
+            font-size: 1.15rem;
+            font-weight: bold;
+            color: #00b37e;
             margin-top: 4px;
         }
 
-        /* CARD DE SUPERVISOR DA SEMANA */
-        .supervisor-banner {
-            background: rgba(247, 90, 104, 0.12);
-            border: 1px solid rgba(247, 90, 104, 0.3);
-            border-radius: 8px;
-            padding: 10px 14px;
-            text-align: center;
-            margin-bottom: 16px;
-        }
-
-        .supervisor-banner .lbl {
-            font-size: 0.7rem;
-            color: #a8a8b3;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .supervisor-banner .name {
-            font-size: 1.05rem;
-            font-weight: bold;
+        .result-card.danger .res-val {
             color: #f75a68;
-            margin-top: 2px;
         }
 
-        /* LOGIN */
-        #loginScreen {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
+        /* Teclado Numérico Estilizado */
+        .keypad-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
         }
 
+        .btn-key {
+            background-color: #200d12;
+            border: 1px solid #32131b;
+            border-radius: 5px;
+            color: #e1e1e6;
+            font-size: 1.1rem;
+            font-weight: bold;
+            padding: 12px 0;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .btn-key:hover {
+            background-color: #2d1117;
+            border-color: #4a1924;
+        }
+
+        .btn-key.action-c {
+            background-color: rgba(247, 90, 104, 0.12);
+            color: #f75a68;
+        }
+
+        .btn-key.action-ok {
+            grid-column: span 3;
+            background-color: #00b37e;
+            color: #ffffff;
+            border: none;
+            margin-top: 4px;
+        }
+
+        .btn-key.action-ok:hover {
+            background-color: #00875f;
+        }
+
+        /* Form / Login */
         .input-group {
             display: flex;
             flex-direction: column;
             gap: 6px;
+            margin-bottom: 14px;
         }
 
         .input-group label {
-            font-size: 0.75rem;
-            color: #a8a8b3;
+            font-size: 0.72rem;
+            color: #8c7076;
             text-transform: uppercase;
         }
 
         .input-field {
-            background-color: #121214;
-            border: 1px solid #323238;
-            border-radius: 6px;
+            background-color: #110709;
+            border: 1px solid #280f14;
+            border-radius: 5px;
             padding: 12px;
             color: #ffffff;
-            font-size: 1rem;
+            font-size: 0.95rem;
             outline: none;
         }
 
@@ -156,203 +373,90 @@
             border-color: #f75a68;
         }
 
-        .btn {
+        .btn-main {
+            background-color: #f75a68;
             border: none;
-            border-radius: 6px;
+            border-radius: 5px;
+            color: #ffffff;
             font-size: 0.9rem;
             font-weight: bold;
             padding: 12px;
+            width: 100%;
             cursor: pointer;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
+            transition: background 0.2s;
         }
 
-        .btn-primary { background-color: #f75a68; color: #ffffff; }
-        .btn-primary:hover { background-color: #d6404e; }
+        .btn-main:hover {
+            background-color: #d6404e;
+        }
 
-        .btn-admin {
-            background-color: #323238;
-            color: #a8a8b3;
+        .btn-sub {
+            background-color: #200d12;
+            border: 1px solid #32131b;
+            color: #8c7076;
             font-size: 0.8rem;
+            padding: 10px;
+            border-radius: 5px;
+            width: 100%;
+            margin-top: 8px;
+            cursor: pointer;
         }
-        .btn-admin:hover { background-color: #42424d; color: #ffffff; }
 
-        .error-message {
+        .btn-sub:hover {
+            color: #ffffff;
+            background-color: #2d1117;
+        }
+
+        .error-msg {
             color: #f75a68;
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             text-align: center;
             display: none;
             background: rgba(247, 90, 104, 0.1);
             padding: 8px;
             border-radius: 4px;
-            border: 1px solid rgba(247, 90, 104, 0.2);
+            margin-bottom: 10px;
         }
 
-        /* TELA FUNCIONÁRIO */
+        /* Área de Gerência / Tabela */
         #userScreen, #adminScreen {
             display: none;
         }
 
-        .user-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #29292e;
-            padding: 10px 14px;
-            border-radius: 8px;
-            margin-bottom: 14px;
-            font-size: 0.85rem;
-        }
-
-        .user-header .info { display: flex; flex-direction: column; }
-        .user-header .name { color: #ffffff; font-weight: bold; font-size: 1rem; }
-        .user-header .role { color: #00b37e; font-size: 0.75rem; font-weight: 600; }
-
-        .btn-logout {
-            background: transparent;
-            border: 1px solid #42424d;
-            color: #a8a8b3;
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.75rem;
-        }
-        .btn-logout:hover { background: #f75a68; color: #ffffff; border-color: #f75a68; }
-
-        .week-badge {
-            background: rgba(0, 179, 126, 0.1);
-            border: 1px solid rgba(0, 179, 126, 0.3);
-            color: #00b37e;
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            text-align: center;
-            margin-bottom: 14px;
-            font-weight: 500;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 14px;
-        }
-
-        .stat-card {
-            background-color: #121214;
-            border: 1px solid #29292e;
-            border-radius: 8px;
-            padding: 10px;
-            text-align: center;
-        }
-
-        .stat-card .label { font-size: 0.7rem; color: #a8a8b3; text-transform: uppercase; }
-        .stat-card .val { font-size: 1.2rem; font-weight: bold; color: #ffffff; margin-top: 2px; }
-
-        .promo-card {
-            background: #181820;
-            border: 1px solid #2e2e38;
-            border-radius: 8px;
-            padding: 10px;
-            font-size: 0.78rem;
-            color: #a8a8b3;
-            margin-bottom: 14px;
-            text-align: center;
-        }
-        .promo-card span { color: #e2a03f; font-weight: bold; }
-
-        .display-group {
-            background-color: #121214;
-            border: 1px solid #323238;
-            border-radius: 8px;
-            padding: 12px;
-            margin-bottom: 14px;
-        }
-
-        .display-label { font-size: 0.75rem; color: #a8a8b3; text-transform: uppercase; margin-bottom: 4px; }
-        .display-value { font-size: 1.8rem; text-align: right; color: #00b37e; font-weight: bold; min-height: 42px; }
-
-        .result-box {
-            background-color: #121214;
-            border: 1px dashed #00b37e;
-            border-radius: 8px;
-            padding: 12px;
-            margin-bottom: 14px;
-            text-align: center;
-        }
-        .result-box.danger { border-color: #f75a68; }
-        .result-title { font-size: 0.75rem; color: #a8a8b3; text-transform: uppercase; }
-        .result-text { font-size: 1.15rem; font-weight: bold; margin-top: 4px; }
-
-        .keypad {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-        }
-
-        button.key {
-            background-color: #29292e;
-            border: none;
-            border-radius: 6px;
-            color: #e1e1e6;
-            font-size: 1.1rem;
-            font-weight: bold;
-            padding: 12px 0;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        button.key:hover { background-color: #323238; }
-        button.key.action-c { background-color: rgba(247, 90, 104, 0.15); color: #f75a68; }
-        button.key.action-ok { grid-column: span 3; background-color: #00b37e; color: #ffffff; margin-top: 4px; }
-        button.key.action-ok:hover { background-color: #00875f; }
-
-        /* TELA DE GERÊNCIA */
         .admin-controls {
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 16px;
-            background: #29292e;
-            padding: 12px;
-            border-radius: 8px;
+            gap: 8px;
+            background: #110709;
+            padding: 10px 12px;
+            border-radius: 6px;
+            margin-bottom: 14px;
+            border: 1px solid #280f14;
         }
 
         .schedule-box {
-            background: #121214;
-            border: 1px solid #323238;
-            border-radius: 8px;
+            background: #110709;
+            border: 1px solid #280f14;
+            border-radius: 6px;
             padding: 12px;
-            margin-bottom: 16px;
-        }
-
-        .schedule-title {
-            font-size: 0.85rem;
-            color: #f75a68;
-            font-weight: bold;
-            text-transform: uppercase;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
+            margin-bottom: 14px;
         }
 
         .schedule-list {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 8px;
-            max-height: 140px;
+            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+            gap: 6px;
+            max-height: 120px;
             overflow-y: auto;
         }
 
         .schedule-item {
-            background: #202024;
-            padding: 6px 10px;
+            background: #1a0b0f;
+            padding: 6px 8px;
             border-radius: 4px;
-            font-size: 0.78rem;
+            font-size: 0.75rem;
             display: flex;
             justify-content: space-between;
             border-left: 3px solid #f75a68;
@@ -363,59 +467,33 @@
             background: rgba(0, 179, 126, 0.1);
         }
 
+        /* Container de Tabela Imprimível */
+        #printableTableArea {
+            background-color: #110709;
+            padding: 16px;
+            border-radius: 6px;
+            border: 1px solid #280f14;
+        }
+
         .table-responsive {
             overflow-x: auto;
             max-height: 480px;
-            border-radius: 8px;
-        }
-
-        /* ESTILO DA TABELA OFICIAL */
-        #printableArea {
-            background-color: #121214;
-            padding: 16px;
-            border-radius: 8px;
-            border: 1px solid #323238;
-            width: 100%;
-        }
-
-        .print-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            margin-bottom: 12px;
-            border-bottom: 2px solid #323238;
-            padding-bottom: 8px;
-        }
-
-        .print-header h2 {
-            font-size: 1.1rem;
-            color: #ffffff;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .print-header span {
-            color: #00b37e;
-            font-size: 0.85rem;
-            font-weight: bold;
         }
 
         table.habbo-table {
             width: 100%;
             border-collapse: collapse;
-            background-color: #121214;
-            color: #ffffff;
-            font-size: 0.82rem;
+            font-size: 0.8rem;
             text-align: left;
         }
 
         table.habbo-table th {
-            background-color: #000000;
-            color: #ffffff;
+            background-color: #090304;
+            color: #f75a68;
             padding: 8px 10px;
             text-transform: uppercase;
-            font-size: 0.72rem;
-            border-bottom: 2px solid #323238;
+            font-size: 0.7rem;
+            border-bottom: 1px solid #280f14;
             position: sticky;
             top: 0;
             z-index: 2;
@@ -423,54 +501,44 @@
 
         table.habbo-table td {
             padding: 8px 10px;
-            border-bottom: 1px solid #29292e;
+            border-bottom: 1px solid #1a0b0f;
             white-space: nowrap;
         }
 
-        table.habbo-table tr:hover { background-color: #1a1a21; }
-
         .badge-status {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-size: 0.72rem;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.7rem;
             font-weight: bold;
         }
-        .badge-success { background-color: rgba(0, 179, 126, 0.2); color: #00b37e; }
-        .badge-danger { background-color: rgba(247, 90, 104, 0.2); color: #f75a68; }
+        .badge-success { background: rgba(0, 179, 126, 0.2); color: #00b37e; }
+        .badge-danger { background: rgba(247, 90, 104, 0.2); color: #f75a68; }
 
-        .editable-input {
-            background: #29292e;
-            border: 1px solid #323238;
-            color: #fff;
-            padding: 4px 6px;
-            border-radius: 4px;
-            width: 70px;
-            font-size: 0.82rem;
+        .editable-input, .editable-select {
+            background: #1c0a0e;
+            border: 1px solid #32131b;
+            color: #ffffff;
+            padding: 3px 6px;
+            border-radius: 3px;
+            font-size: 0.78rem;
         }
 
-        .editable-select {
-            background: #29292e;
-            border: 1px solid #323238;
-            color: #fff;
-            padding: 4px;
-            border-radius: 4px;
-            font-size: 0.8rem;
+        .btn-sm {
+            padding: 4px 8px;
+            font-size: 0.72rem;
+            border-radius: 3px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
         }
-
-        .btn-sm { padding: 5px 8px; font-size: 0.75rem; border-radius: 4px; }
         .btn-success { background-color: #00b37e; color: #fff; }
-        .btn-success:hover { background-color: #00875f; }
         .btn-warning { background-color: #e2a03f; color: #fff; }
-        .btn-warning:hover { background-color: #c4862f; }
         .btn-info { background-color: #3b82f6; color: #fff; }
-        .btn-info:hover { background-color: #2563eb; }
 
-        /* MODO PRINT CELULAR / FORMATO EXPORTADO */
         .rendering-canvas {
             max-height: none !important;
             overflow: visible !important;
-            width: 850px !important; /* Largura fixa proporcional para a imagem final */
+            width: 860px !important;
         }
     </style>
 </head>
@@ -478,155 +546,169 @@
 
     <div class="pixel-bg" id="pixelBg"></div>
 
-    <div class="card-container" id="mainContainer">
+    <div class="main-wrapper" id="mainWrapper">
         
-        <div class="header-title">
-            <h1>MERCADO <span>RP</span></h1>
-            <div class="subtitle">Controle Semanal de Produtividade</div>
-        </div>
-
-        <!-- TELA DE LOGIN -->
-        <div id="loginScreen">
-            <div class="supervisor-banner">
-                <div class="lbl">Responsável da Semana Atual</div>
-                <div class="name" id="currentSupervisorBanner">Carregando...</div>
+        <div class="panel-card">
+            <div class="panel-header">
+                <h1>Painel Operacional <span>• Mercado</span></h1>
+                <div class="badge-live">Turno Ativo</div>
             </div>
 
-            <div class="input-group">
-                <label for="usernameInput">Seu Nick no Habbo</label>
-                <input type="text" id="usernameInput" class="input-field" placeholder="Ex: Solyta, Chantal..." autocomplete="off">
-            </div>
-
-            <div class="error-message" id="errorMessage">
-                Funcionário não encontrado na lista!
-            </div>
-
-            <button class="btn btn-primary" onclick="loginUser()">Acessar Meu Relatório</button>
-            <button class="btn btn-admin" onclick="showAdminLogin()">Área do Gerente / Supervisor</button>
-        </div>
-
-        <!-- PAINEL INDIVIDUAL DO FUNCIONÁRIO -->
-        <div id="userScreen">
-            <div class="user-header">
-                <div class="info">
-                    <span class="name" id="uName">Solyta</span>
-                    <span class="role" id="uRole">Encarregado de Loja</span>
+            <!-- TELA DE LOGIN -->
+            <div id="loginScreen">
+                <div class="section-title">DESTAQUES E SUPERVISÃO</div>
+                <div class="supervisor-card">
+                    <div>
+                        <div class="resp-sub">SUPERVISOR DA SEMANA</div>
+                        <div class="resp-name" id="currentSupervisorBanner">Carregando...</div>
+                    </div>
+                    <span style="font-size:1.4rem;">⭐</span>
                 </div>
-                <button class="btn-logout" onclick="logout()">Sair</button>
-            </div>
 
-            <div class="week-badge" id="weekBadge">
-                Semana Atual: 19/10/2026 à 25/10/2026
-            </div>
-
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="label">Turnos Iniciais</div>
-                    <div class="val" id="uInitial">1606</div>
+                <div class="section-title">ACESSO AO SISTEMA</div>
+                <div class="input-group">
+                    <label for="usernameInput">DIGITE SEU NICKNAME NO HABBO</label>
+                    <input type="text" id="usernameInput" class="input-field" placeholder="Ex: Solyta, Chantal..." autocomplete="off">
                 </div>
-                <div class="stat-card">
-                    <div class="label">Meta do Cargo</div>
-                    <div class="val" id="uMeta">25</div>
+
+                <div class="error-msg" id="errorMessage">
+                    Funcionário não encontrado no sistema!
                 </div>
+
+                <button class="btn-main" onclick="loginUser()">ACESSAR MEU PAINEL</button>
+                <button class="btn-sub" onclick="showAdminLogin()">Área Administrativa (Gerentes/Supervisores)</button>
             </div>
 
-            <div class="promo-card">
-                Progresso de Promoção: <span id="uPromoProgress">0 / 40 turnos</span>
-            </div>
-
-            <div class="display-group">
-                <div class="display-label">Simular / Digitar Turno Atual</div>
-                <div class="display-value" id="display">0</div>
-            </div>
-
-            <div class="result-box" id="resultBox">
-                <div class="result-title">Situação na Semana Ativa</div>
-                <div class="result-text" id="resultText">Turnos Feitos: 0</div>
-            </div>
-
-            <div class="keypad">
-                <button class="key" onclick="appendNum('7')">7</button>
-                <button class="key" onclick="appendNum('8')">8</button>
-                <button class="key" onclick="appendNum('9')">9</button>
-                
-                <button class="key" onclick="appendNum('4')">4</button>
-                <button class="key" onclick="appendNum('5')">5</button>
-                <button class="key" onclick="appendNum('6')">6</button>
-                
-                <button class="key" onclick="appendNum('1')">1</button>
-                <button class="key" onclick="appendNum('2')">2</button>
-                <button class="key" onclick="appendNum('3')">3</button>
-                
-                <button class="key" onclick="appendNum('0')">0</button>
-                <button class="key action-c" onclick="clearNum()">C</button>
-                <button class="key" onclick="deleteNum()">⌫</button>
-
-                <button class="key action-ok" onclick="calculateShift()">Calcular Turnos Restantes</button>
-            </div>
-        </div>
-
-        <!-- PAINEL ADMIN (TABELA & REGRAS) -->
-        <div id="adminScreen">
-            <div class="user-header">
-                <div class="info">
-                    <span class="name">Painel Administrativo</span>
-                    <span class="role">Gerenciamento de Produtividade</span>
+            <!-- TELA DO FUNCIONÁRIO (PAINEL HABBO ORIGINAL) -->
+            <div id="userScreen">
+                <div class="section-title">INFORMAÇÕES PESSOAIS</div>
+                <div class="profile-box">
+                    <div class="avatar-frame" id="avatarFrame"></div>
+                    <div class="profile-info">
+                        <div class="info-item">
+                            <span class="lbl">NICK</span>
+                            <span class="val" id="uName">Solyta</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="lbl">CARGO</span>
+                            <span class="role-tag" id="uRole">Encarregado de Loja</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="lbl">SITUAÇÃO</span>
+                            <span class="val" style="color:#00b37e;">Ativo</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="lbl">AÇÕES</span>
+                            <span class="val" style="cursor:pointer; text-decoration:underline; font-size:0.75rem;" onclick="logout()">Sair</span>
+                        </div>
+                    </div>
                 </div>
-                <button class="btn-logout" onclick="logout()">Sair</button>
-            </div>
 
-            <div class="schedule-box">
-                <div class="schedule-title">
-                    <span>📅 Escala de Responsáveis (Até o final de 2026)</span>
+                <div class="section-title">PROGRESSO DE PROMOÇÃO (A CADA 40 TURNOS)</div>
+                <div class="promo-bar-container">
+                    <div class="promo-bar-header">
+                        <span>Turnos para o Próximo Nível</span>
+                        <strong id="promoText">0 / 40</strong>
+                    </div>
+                    <div class="promo-bar-bg">
+                        <div class="promo-bar-fill" id="promoFill"></div>
+                    </div>
                 </div>
-                <div class="schedule-list" id="scheduleList">
-                    <!-- Gerado via JS -->
-                </div>
-            </div>
 
-            <div class="admin-controls">
-                <div>
-                    <strong>Semana Ativa:</strong> <span id="adminWeekText">19/10/2026 à 25/10/2026</span>
+                <div class="section-title">PRODUTIVIDADE DA SEMANA ATUAL</div>
+                <div class="profile-info" style="margin-bottom:14px; background:#110709; padding:10px; border-radius:6px; border:1px solid #280f14;">
+                    <div class="info-item">
+                        <span class="lbl">TURNOS INICIAIS</span>
+                        <span class="val" id="uInitial">1606</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="lbl">META DO CARGO</span>
+                        <span class="val" id="uMeta">25 turnos</span>
+                    </div>
                 </div>
-                <div style="display:flex; gap:6px; flex-wrap:wrap;">
-                    <button class="btn btn-info btn-sm" onclick="generateTableImage()">📷 Baixar Imagem da Tabela</button>
-                    <button class="btn btn-warning btn-sm" onclick="advanceWeek()">🔄 Virar Nova Semana</button>
-                    <button class="btn btn-success btn-sm" onclick="addNewEmployeePrompt()">+ Add Funcionário</button>
+
+                <div class="display-box">
+                    <div class="display-lbl">INFORME SEU TURNO ATUAL</div>
+                    <div class="display-val" id="display">0</div>
+                </div>
+
+                <div class="result-card" id="resultCard">
+                    <div class="res-title">SITUAÇÃO NA SEMANA</div>
+                    <div class="res-val" id="resultText">Turnos Feitos: 0</div>
+                </div>
+
+                <div class="keypad-grid">
+                    <button class="btn-key" onclick="appendNum('7')">7</button>
+                    <button class="btn-key" onclick="appendNum('8')">8</button>
+                    <button class="btn-key" onclick="appendNum('9')">9</button>
+                    
+                    <button class="btn-key" onclick="appendNum('4')">4</button>
+                    <button class="btn-key" onclick="appendNum('5')">5</button>
+                    <button class="btn-key" onclick="appendNum('6')">6</button>
+                    
+                    <button class="btn-key" onclick="appendNum('1')">1</button>
+                    <button class="btn-key" onclick="appendNum('2')">2</button>
+                    <button class="btn-key" onclick="appendNum('3')">3</button>
+                    
+                    <button class="btn-key" onclick="appendNum('0')">0</button>
+                    <button class="btn-key action-c" onclick="clearNum()">C</button>
+                    <button class="btn-key" onclick="deleteNum()">⌫</button>
+
+                    <button class="btn-key action-ok" onclick="calculateShift()">Calcular Turnos Restantes</button>
                 </div>
             </div>
 
-            <!-- ÁREA IMPRESSA NO PRINT -->
-            <div id="printableArea">
-                <div class="print-header">
-                    <h2>MERCADO - Controle Semanal de Produtividade</h2>
-                    <span id="printWeekSpan">19/10/2026 à 25/10/2026</span>
+            <!-- TELA DE GERÊNCIA -->
+            <div id="adminScreen">
+                <div class="section-title" style="display:flex; justify-content:space-between; align-items:center;">
+                    <span>PAINEL DE GERÊNCIA E SUPERVISÃO</span>
+                    <button class="btn-sub" style="width:auto; padding:4px 8px; margin:0;" onclick="logout()">Sair</button>
                 </div>
-                <div class="table-responsive" id="tableResponsiveBox">
-                    <table class="habbo-table">
-                        <thead>
-                            <tr>
-                                <th>Funcionário(a)</th>
-                                <th>Cargo</th>
-                                <th>Inicial</th>
-                                <th>Atual (Oficial)</th>
-                                <th>Feitos</th>
-                                <th>Meta</th>
-                                <th>Status</th>
-                                <th class="action-col">Salvar/Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tableBody">
-                            <!-- Preenchido via JS -->
-                        </tbody>
-                    </table>
+
+                <div class="schedule-box">
+                    <div class="section-title">CRONOGRAMA DE SUPERVISÃO ATÉ O FIM DE 2026</div>
+                    <div class="schedule-list" id="scheduleList"></div>
+                </div>
+
+                <div class="admin-controls">
+                    <div>
+                        <span style="font-size:0.75rem; color:#8c7076;">SEMANA ATIVA:</span><br>
+                        <strong id="adminWeekText" style="font-size:0.85rem; color:#f75a68;">19/10/2026 à 25/10/2026</strong>
+                    </div>
+                    <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                        <button class="btn-sm btn-info" onclick="generateTableImage()">📷 Baixar Imagem</button>
+                        <button class="btn-sm btn-warning" onclick="advanceWeek()">🔄 Virar Semana</button>
+                        <button class="btn-sm btn-success" onclick="addNewEmployeePrompt()">+ Add Funcional</button>
+                    </div>
+                </div>
+
+                <div id="printableTableArea">
+                    <div class="table-responsive" id="tableResponsiveBox">
+                        <table class="habbo-table">
+                            <thead>
+                                <tr>
+                                    <th>Funcionário(a)</th>
+                                    <th>Cargo</th>
+                                    <th>Iniciais</th>
+                                    <th>Atuais (Oficial)</th>
+                                    <th>Feitos</th>
+                                    <th>Meta</th>
+                                    <th>Status</th>
+                                    <th class="action-col">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
+
         </div>
 
     </div>
 
     <script>
-        // REGRAS DE METAS POR CARGO
+        // METAS POR CARGO
         const roleMetas = {
             "Operador de Loja": 15,
             "Balconista": 15,
@@ -636,7 +718,7 @@
             "Gerente": 10
         };
 
-        // ESCALA DE GERENTES/SUPERVISORES ATÉ O FIM DE 2026
+        // ESCALA ATÉ O FIM DE 2026
         const rotationSchedule = [
             { week: "19/10/2026 à 25/10/2026", resp: "Monica" },
             { week: "26/10/2026 à 01/11/2026", resp: "Afrontoso" },
@@ -680,7 +762,7 @@
         let activeUser = null;
         let currentInput = "0";
 
-        // ANIMAÇÃO DE FUNDO PIXEL
+        // GERAR FUNDO PIXEL
         const bgIcons = ['🛒', '📦', '🪙', '🍎', '🥤', '🍞', '🏬'];
         const bgContainer = document.getElementById('pixelBg');
         for (let i = 0; i < 20; i++) {
@@ -693,9 +775,7 @@
             bgContainer.appendChild(icon);
         }
 
-        // CARREGAR TELA INICIAL
         function initApp() {
-            // Identifica supervisor da semana
             const match = rotationSchedule.find(s => s.week === currentWeekText) || rotationSchedule[0];
             document.getElementById("currentSupervisorBanner").innerText = `${match.resp} (${match.week})`;
         }
@@ -729,20 +809,22 @@
                 document.getElementById("uName").innerText = found.name;
                 document.getElementById("uRole").innerText = found.role;
                 document.getElementById("uInitial").innerText = found.initial;
-                document.getElementById("uMeta").innerText = meta;
-                document.getElementById("weekBadge").innerText = "Semana Atual: " + currentWeekText;
-                
-                // Progresso para subir de cargo (a cada 40 turnos acumulados)
-                let feitosEstaSemana = found.current - found.initial;
-                if (feitosEstaSemana < 0) feitosEstaSemana = 0;
-                let progressInRole = (found.current) % 40;
-                document.getElementById("uPromoProgress").innerText = `${progressInRole} / 40 turnos para o próximo nível`;
+                document.getElementById("uMeta").innerText = meta + " turnos";
+
+                // Atualizar avatar dinâmico do Habbo
+                document.getElementById("avatarFrame").style.backgroundImage = `url('https://www.habbo.com.br/habbo-imaging/avatarimage?user=${found.name}&action=std&direction=2&head_direction=2&gesture=sml&size=m')`;
+
+                // Progresso de promoção
+                let progress = (found.current) % 40;
+                let pct = (progress / 40) * 100;
+                document.getElementById("promoText").innerText = `${progress} / 40 turnos`;
+                document.getElementById("promoFill").style.width = pct + "%";
 
                 currentInput = found.current.toString();
                 updateDisplay();
                 calculateShift();
             } else {
-                errorMsg.innerText = "Funcionário não encontrado na lista!";
+                errorMsg.innerText = "Funcionário não encontrado no sistema!";
                 errorMsg.style.display = "block";
             }
         }
@@ -752,9 +834,8 @@
             if (pass && (pass === "admin123" || ["afrontoso", "solyta", "chantal", "monica"].includes(pass.toLowerCase()))) {
                 document.getElementById("loginScreen").style.display = "none";
                 document.getElementById("adminScreen").style.display = "block";
-                document.getElementById("mainContainer").classList.add("wide");
+                document.getElementById("mainWrapper").classList.add("wide");
                 document.getElementById("adminWeekText").innerText = currentWeekText;
-                document.getElementById("printWeekSpan").innerText = currentWeekText;
                 renderSchedule();
                 renderAdminTable();
             } else if (pass) {
@@ -766,12 +847,11 @@
             activeUser = null;
             document.getElementById("userScreen").style.display = "none";
             document.getElementById("adminScreen").style.display = "none";
-            document.getElementById("loginScreen").style.display = "flex";
-            document.getElementById("mainContainer").classList.remove("wide");
+            document.getElementById("loginScreen").style.display = "block";
+            document.getElementById("mainWrapper").classList.remove("wide");
             document.getElementById("usernameInput").value = "";
         }
 
-        // TECLADO NUMÉRICO
         const display = document.getElementById("display");
 
         function updateDisplay() { display.innerText = currentInput; }
@@ -799,19 +879,18 @@
             if (feitos < 0) feitos = 0;
 
             let faltando = meta - feitos;
-            const resBox = document.getElementById("resultBox");
+            const resCard = document.getElementById("resultCard");
             const resText = document.getElementById("resultText");
 
             if (faltando > 0) {
-                resBox.className = "result-box danger";
-                resText.innerHTML = `Feitos nesta semana: <span style="color:#ffffff;">${feitos}</span><br><span style="color:#f75a68;">Faltam ${faltando} turnos para bater a meta</span>`;
+                resCard.className = "result-card danger";
+                resText.innerHTML = `Feitos nesta semana: <span style="color:#ffffff;">${feitos}</span><br><span style="color:#f75a68;">Faltam ${faltando} turnos para a meta</span>`;
             } else {
-                resBox.className = "result-box";
+                resCard.className = "result-card";
                 resText.innerHTML = `Feitos nesta semana: <span style="color:#ffffff;">${feitos}</span><br><span style="color:#00b37e;">🎉 Meta do Cargo Batida!</span>`;
             }
         }
 
-        // RENDERIZAÇÃO DA ESCALA NO PAINEL ADMIN
         function renderSchedule() {
             const container = document.getElementById("scheduleList");
             container.innerHTML = "";
@@ -828,7 +907,6 @@
             });
         }
 
-        // RENDERIZAÇÃO DA TABELA ADMINISTRATIVA
         function renderAdminTable() {
             const tbody = document.getElementById("tableBody");
             tbody.innerHTML = "";
@@ -839,13 +917,11 @@
                 if (feitos < 0) feitos = 0;
                 let alcançou = feitos >= meta;
 
-                let tr = document.createElement("tr");
-
-                // Gerar opções de cargo para o select
                 let roleOptions = Object.keys(roleMetas).map(r => 
                     `<option value="${r}" ${r === emp.role ? 'selected' : ''}>${r}</option>`
                 ).join("");
 
+                let tr = document.createElement("tr");
                 tr.innerHTML = `
                     <td><strong>${emp.name}</strong></td>
                     <td>
@@ -865,8 +941,8 @@
                         </span>
                     </td>
                     <td class="action-col">
-                        <button class="btn btn-success btn-sm" onclick="saveSingleTurn(${index})">💾 Salvar</button>
-                        <button class="btn btn-admin btn-sm" onclick="removeEmp(${index})">❌</button>
+                        <button class="btn-sm btn-success" onclick="saveSingleTurn(${index})">💾 Salvar</button>
+                        <button class="btn-sm btn-sub" style="margin:0;" onclick="removeEmp(${index})">❌</button>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -891,7 +967,7 @@
         }
 
         function removeEmp(index) {
-            if (confirm(`Remover ${employees[index].name} da lista corporativa?`)) {
+            if (confirm(`Remover ${employees[index].name} da lista?`)) {
                 employees.splice(index, 1);
                 saveData();
                 renderAdminTable();
@@ -901,7 +977,7 @@
         function addNewEmployeePrompt() {
             const name = prompt("Nome do Funcionário:");
             if (!name) return;
-            const role = prompt("Cargo (Operador de Loja, Balconista, Caixa, Encarregado de Loja, Supervisor, Gerente):", "Operador de Loja") || "Operador de Loja";
+            const role = prompt("Cargo:", "Operador de Loja") || "Operador de Loja";
             const initial = parseInt(prompt("Turno Inicial:", "0")) || 0;
 
             employees.push({
@@ -916,7 +992,7 @@
         }
 
         function advanceWeek() {
-            if (confirm("Deseja virar a semana? Os Turnos Atuais virarão o novo Turno Inicial para a semana seguinte!")) {
+            if (confirm("Deseja virar a semana? Os Turnos Atuais virarão o novo Turno Inicial!")) {
                 employees.forEach(emp => {
                     emp.initial = emp.current;
                 });
@@ -928,7 +1004,6 @@
 
                 saveData();
                 document.getElementById("adminWeekText").innerText = currentWeekText;
-                document.getElementById("printWeekSpan").innerText = currentWeekText;
                 initApp();
                 renderSchedule();
                 renderAdminTable();
@@ -936,18 +1011,16 @@
             }
         }
 
-        // GERAR IMAGEM PROPORCIONAL PARA CELULAR E DESKTOP
         function generateTableImage() {
-            const area = document.getElementById("printableArea");
+            const area = document.getElementById("printableTableArea");
             const responsiveBox = document.getElementById("tableResponsiveBox");
             const actionCols = document.querySelectorAll(".action-col");
 
-            // Oculta botões de edição/exclusão na foto
             actionCols.forEach(c => c.style.display = "none");
             responsiveBox.classList.add("rendering-canvas");
 
             html2canvas(area, {
-                backgroundColor: "#121214",
+                backgroundColor: "#110709",
                 scale: 2,
                 useCORS: true
             }).then(canvas => {
@@ -955,7 +1028,7 @@
                 actionCols.forEach(c => c.style.display = "");
 
                 const link = document.createElement('a');
-                link.download = `Relatorio_Mercado_Habbo_${currentWeekText.replace(/[/]/g, '-')}.png`;
+                link.download = `Mercado_Habbo_${currentWeekText.replace(/[/]/g, '-')}.png`;
                 link.href = canvas.toDataURL('image/png');
                 link.click();
             });
