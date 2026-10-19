@@ -474,16 +474,16 @@
         table.habbo-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.8rem;
+            font-size: 0.82rem;
             text-align: left;
         }
 
         table.habbo-table th {
             background-color: #03060a;
             color: #60a5fa;
-            padding: 8px 10px;
+            padding: 10px 12px;
             text-transform: uppercase;
-            font-size: 0.7rem;
+            font-size: 0.72rem;
             border-bottom: 1px solid #12223c;
             position: sticky;
             top: 0;
@@ -491,27 +491,38 @@
         }
 
         table.habbo-table td {
-            padding: 8px 10px;
+            padding: 10px 12px;
             border-bottom: 1px solid #0f1c30;
             white-space: nowrap;
         }
 
         .badge-status {
-            padding: 2px 6px;
+            padding: 3px 8px;
             border-radius: 3px;
-            font-size: 0.7rem;
+            font-size: 0.72rem;
             font-weight: bold;
         }
         .badge-success { background: rgba(96, 165, 250, 0.2); color: #60a5fa; }
         .badge-danger { background: rgba(248, 113, 113, 0.2); color: #f87171; }
 
-        .editable-input, .editable-select {
+        .editable-input {
             background: #0f1c30;
             border: 1px solid #1a2f4d;
             color: #ffffff;
-            padding: 3px 6px;
-            border-radius: 3px;
-            font-size: 0.78rem;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            width: 90px;
+            text-align: center;
+        }
+
+        .editable-select {
+            background: #0f1c30;
+            border: 1px solid #1a2f4d;
+            color: #ffffff;
+            padding: 4px 6px;
+            border-radius: 4px;
+            font-size: 0.8rem;
         }
 
         .btn-sm {
@@ -527,11 +538,10 @@
         .btn-info { background-color: #0284c7; color: #fff; }
         .btn-danger { background-color: #dc2626; color: #fff; }
 
-        /* CLASSE DE SUPORTE PARA FORÇAR EXIBIÇÃO TOTAL SEM CORTES NO PRINT */
         .force-full-print {
             max-height: none !important;
             overflow: visible !important;
-            width: 900px !important;
+            width: 960px !important;
         }
     </style>
 </head>
@@ -933,13 +943,13 @@
                 let tr = document.createElement("tr");
                 tr.innerHTML = `
                     <td><strong>${emp.name}</strong></td>
-                    <td>
+                    <td class="role-cell" data-role="${emp.role}">
                         <select class="editable-select" onchange="updateEmpRole(${index}, this.value)">
                             ${roleOptions}
                         </select>
                     </td>
                     <td>${emp.initial}</td>
-                    <td>
+                    <td class="turn-cell" data-val="${emp.current}">
                         <input type="number" class="editable-input" id="emp-curr-${index}" value="${emp.current}">
                     </td>
                     <td><strong>${feitos}</strong></td>
@@ -1053,25 +1063,41 @@
             });
         }
 
-        // GERADOR DE IMAGEM OTIMIZADO PARA CELULAR E PC (SEM CORTES)
+        // GERADOR DE IMAGEM CORRIGIDO PARA EVITAR CORTES NOS NÚMEROS
         function generateTableImage() {
             const area = document.getElementById("printableTableArea");
             const responsiveBox = document.getElementById("tableResponsiveBox");
             const actionCols = document.querySelectorAll(".action-col");
 
-            // Oculta a coluna de ações e aplica largura fixa temporária para renderizar por completo
+            // Oculta colunas de ação
             actionCols.forEach(c => c.style.display = "none");
+
+            // Substitui temporariamente os campos <input> e <select> por spans com texto puro
+            const turnCells = document.querySelectorAll(".turn-cell");
+            const roleCells = document.querySelectorAll(".role-cell");
+
+            turnCells.forEach(cell => {
+                const val = cell.getAttribute("data-val");
+                cell.innerHTML = `<strong>${val}</strong>`;
+            });
+
+            roleCells.forEach(cell => {
+                const role = cell.getAttribute("data-role");
+                cell.innerHTML = role;
+            });
+
             responsiveBox.classList.add("force-full-print");
 
             html2canvas(area, {
                 backgroundColor: "#060b14",
                 scale: 2,
                 useCORS: true,
-                windowWidth: 1000 // Simula uma tela larga no print para evitar qualquer quebra de layout mobile
+                windowWidth: 1000
             }).then(canvas => {
-                // Restaura o layout normal na tela do usuário
+                // Restaura o formato editável normal da tabela
                 responsiveBox.classList.remove("force-full-print");
                 actionCols.forEach(c => c.style.display = "");
+                renderAdminTable();
 
                 const link = document.createElement('a');
                 link.download = `Mercado_Habbo_${currentWeekText.replace(/[/]/g, '-')}.png`;
