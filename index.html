@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mercado Habbo RP - Controle de Turnos</title>
+    <!-- Biblioteca html2canvas para gerar a imagem da tabela -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -145,14 +147,8 @@
             gap: 8px;
         }
 
-        .btn-primary {
-            background-color: #f75a68;
-            color: #ffffff;
-        }
-
-        .btn-primary:hover {
-            background-color: #d6404e;
-        }
+        .btn-primary { background-color: #f75a68; color: #ffffff; }
+        .btn-primary:hover { background-color: #d6404e; }
 
         .btn-admin {
             background-color: #323238;
@@ -160,11 +156,7 @@
             margin-top: 6px;
             font-size: 0.8rem;
         }
-
-        .btn-admin:hover {
-            background-color: #42424d;
-            color: #ffffff;
-        }
+        .btn-admin:hover { background-color: #42424d; color: #ffffff; }
 
         .error-message {
             color: #f75a68;
@@ -193,21 +185,9 @@
             font-size: 0.85rem;
         }
 
-        .user-header .info {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .user-header .name {
-            color: #ffffff;
-            font-weight: bold;
-            font-size: 1rem;
-        }
-
-        .user-header .role {
-            color: #a8a8b3;
-            font-size: 0.75rem;
-        }
+        .user-header .info { display: flex; flex-direction: column; }
+        .user-header .name { color: #ffffff; font-weight: bold; font-size: 1rem; }
+        .user-header .role { color: #a8a8b3; font-size: 0.75rem; }
 
         .btn-logout {
             background: transparent;
@@ -218,12 +198,7 @@
             cursor: pointer;
             font-size: 0.75rem;
         }
-
-        .btn-logout:hover {
-            background: #f75a68;
-            color: #ffffff;
-            border-color: #f75a68;
-        }
+        .btn-logout:hover { background: #f75a68; color: #ffffff; border-color: #f75a68; }
 
         .week-badge {
             background: rgba(0, 179, 126, 0.1);
@@ -252,18 +227,8 @@
             text-align: center;
         }
 
-        .stat-card .label {
-            font-size: 0.7rem;
-            color: #a8a8b3;
-            text-transform: uppercase;
-        }
-
-        .stat-card .val {
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: #ffffff;
-            margin-top: 2px;
-        }
+        .stat-card .label { font-size: 0.7rem; color: #a8a8b3; text-transform: uppercase; }
+        .stat-card .val { font-size: 1.3rem; font-weight: bold; color: #ffffff; margin-top: 2px; }
 
         .display-group {
             background-color: #121214;
@@ -273,20 +238,8 @@
             margin-bottom: 14px;
         }
 
-        .display-label {
-            font-size: 0.75rem;
-            color: #a8a8b3;
-            text-transform: uppercase;
-            margin-bottom: 4px;
-        }
-
-        .display-value {
-            font-size: 1.8rem;
-            text-align: right;
-            color: #00b37e;
-            font-weight: bold;
-            min-height: 42px;
-        }
+        .display-label { font-size: 0.75rem; color: #a8a8b3; text-transform: uppercase; margin-bottom: 4px; }
+        .display-value { font-size: 1.8rem; text-align: right; color: #00b37e; font-weight: bold; min-height: 42px; }
 
         .result-box {
             background-color: #121214;
@@ -296,22 +249,9 @@
             margin-bottom: 16px;
             text-align: center;
         }
-
-        .result-box.danger {
-            border-color: #f75a68;
-        }
-
-        .result-title {
-            font-size: 0.75rem;
-            color: #a8a8b3;
-            text-transform: uppercase;
-        }
-
-        .result-text {
-            font-size: 1.25rem;
-            font-weight: bold;
-            margin-top: 4px;
-        }
+        .result-box.danger { border-color: #f75a68; }
+        .result-title { font-size: 0.75rem; color: #a8a8b3; text-transform: uppercase; }
+        .result-text { font-size: 1.25rem; font-weight: bold; margin-top: 4px; }
 
         .keypad {
             display: grid;
@@ -330,24 +270,12 @@
             cursor: pointer;
             transition: background 0.2s;
         }
-
         button.key:hover { background-color: #323238; }
-
-        button.key.action-c {
-            background-color: rgba(247, 90, 104, 0.15);
-            color: #f75a68;
-        }
-
-        button.key.action-ok {
-            grid-column: span 3;
-            background-color: #00b37e;
-            color: #ffffff;
-            margin-top: 4px;
-        }
-
+        button.key.action-c { background-color: rgba(247, 90, 104, 0.15); color: #f75a68; }
+        button.key.action-ok { grid-column: span 3; background-color: #00b37e; color: #ffffff; margin-top: 4px; }
         button.key.action-ok:hover { background-color: #00875f; }
 
-        /* PAINEL ADMIN TABELA */
+        /* PAINEL ADMIN E IMPRESSÃO DA TABELA */
         .admin-controls {
             display: flex;
             justify-content: space-between;
@@ -360,11 +288,39 @@
             border-radius: 8px;
         }
 
-        .table-responsive {
-            overflow-x: auto;
+        /* Container que será transformado em imagem */
+        #printableTableArea {
+            background-color: #121214;
+            padding: 20px;
             border-radius: 8px;
             border: 1px solid #323238;
-            max-height: 500px;
+        }
+
+        .table-header-print {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 14px;
+            border-bottom: 2px solid #323238;
+            padding-bottom: 10px;
+        }
+
+        .table-header-print h2 {
+            font-size: 1.2rem;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .table-header-print span {
+            color: #00b37e;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            max-height: 450px;
         }
 
         table.habbo-table {
@@ -393,9 +349,7 @@
             border-bottom: 1px solid #29292e;
         }
 
-        table.habbo-table tr:hover {
-            background-color: #1a1a21;
-        }
+        table.habbo-table tr:hover { background-color: #1a1a21; }
 
         .badge-status {
             display: inline-block;
@@ -404,7 +358,6 @@
             font-size: 0.75rem;
             font-weight: bold;
         }
-
         .badge-success { background-color: rgba(0, 179, 126, 0.2); color: #00b37e; }
         .badge-danger { background-color: rgba(247, 90, 104, 0.2); color: #f75a68; }
 
@@ -418,17 +371,13 @@
             font-size: 0.85rem;
         }
 
-        .btn-sm {
-            padding: 6px 10px;
-            font-size: 0.75rem;
-            border-radius: 4px;
-        }
-
+        .btn-sm { padding: 6px 10px; font-size: 0.75rem; border-radius: 4px; }
         .btn-success { background-color: #00b37e; color: #fff; }
         .btn-success:hover { background-color: #00875f; }
-
         .btn-warning { background-color: #e2a03f; color: #fff; }
         .btn-warning:hover { background-color: #c4862f; }
+        .btn-info { background-color: #3b82f6; color: #fff; }
+        .btn-info:hover { background-color: #2563eb; }
     </style>
 </head>
 <body>
@@ -527,37 +476,44 @@
                 <div>
                     <strong>Semana Ativa:</strong> <span id="adminWeekText">19/10/2026 à 25/10/2026</span>
                 </div>
-                <div style="display:flex; gap:8px;">
-                    <button class="btn btn-warning btn-sm" onclick="advanceWeek()">🔄 Virar Nova Semana</button>
-                    <button class="btn btn-success btn-sm" onclick="addNewEmployeePrompt()">+ Add Funcionário</button>
+                <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                    <button class="btn btn-info btn-sm" onclick="generateTableImage()">📷 Gerar Imagem da Tabela</button>
+                    <button class="btn btn-warning btn-sm" onclick="advanceWeek()">🔄 Virar Semana</button>
+                    <button class="btn btn-success btn-sm" onclick="addNewEmployeePrompt()">+ Funcional</button>
                 </div>
             </div>
 
-            <div class="table-responsive">
-                <table class="habbo-table">
-                    <thead>
-                        <tr>
-                            <th>Funcionário(a)</th>
-                            <th>Cargo</th>
-                            <th>Turnos Finais (Até 18/10)</th>
-                            <th>Turnos Atuais</th>
-                            <th>Feitos</th>
-                            <th>Meta</th>
-                            <th>Status</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tableBody">
-                        <!-- Preenchido via JS -->
-                    </tbody>
-                </table>
+            <!-- Área isolada para virar imagem bonita -->
+            <div id="printableTableArea">
+                <div class="table-header-print">
+                    <h2>MERCADO - Controle Semanal de Produtividade</h2>
+                    <span id="printWeekSpan">19/10/2026 à 25/10/2026</span>
+                </div>
+                <div class="table-responsive">
+                    <table class="habbo-table">
+                        <thead>
+                            <tr>
+                                <th>Funcionário(a)</th>
+                                <th>Cargo</th>
+                                <th>Turnos Iniciais</th>
+                                <th>Turnos Atuais</th>
+                                <th>Turnos Feitos</th>
+                                <th>Meta</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            <!-- Preenchido via JS -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
     </div>
 
     <script>
-        // BASE DE DADOS COMPLETA COM OS DADOS DA ÚLTIMA SEMANA (Até 18/10/2026)
         const defaultEmployees = [
             { name: "Afrontoso", role: "Gerente", initial: 3401, current: 3401, meta: 15 },
             { name: "Chantal", role: "Supervisor", initial: 2181, current: 2181, meta: 15 },
@@ -581,223 +537,4 @@
             { name: "cityhunter", role: "Operador de Loja", initial: 17, current: 17, meta: 15 }
         ];
 
-        let employees = JSON.parse(localStorage.getItem("habbo_market_emp")) || defaultEmployees;
-        let currentWeekText = localStorage.getItem("habbo_market_week") || "19/10/2026 à 25/10/2026";
-        let activeUser = null;
-        let currentInput = "0";
-
-        // FUNDO PIXEL ANIMADO
-        const bgIcons = ['🛒', '📦', '🪙', '🍎', '🥤', '🍞', '🏬'];
-        const bgContainer = document.getElementById('pixelBg');
-        for (let i = 0; i < 20; i++) {
-            let icon = document.createElement('div');
-            icon.className = 'pixel-icon';
-            icon.innerText = bgIcons[Math.floor(Math.random() * bgIcons.length)];
-            icon.style.left = Math.random() * 100 + '%';
-            icon.style.animationDuration = (6 + Math.random() * 8) + 's';
-            icon.style.animationDelay = (Math.random() * 5) + 's';
-            bgContainer.appendChild(icon);
-        }
-
-        function saveData() {
-            localStorage.setItem("habbo_market_emp", JSON.stringify(employees));
-            localStorage.setItem("habbo_market_week", currentWeekText);
-        }
-
-        function loginUser() {
-            const nick = document.getElementById("usernameInput").value.trim().toLowerCase();
-            const errorMsg = document.getElementById("errorMessage");
-
-            if (!nick) {
-                errorMsg.innerText = "Por favor, digite seu nickname!";
-                errorMsg.style.display = "block";
-                return;
-            }
-
-            const found = employees.find(e => e.name.toLowerCase() === nick);
-
-            if (found) {
-                activeUser = found;
-                errorMsg.style.display = "none";
-                document.getElementById("loginScreen").style.display = "none";
-                document.getElementById("userScreen").style.display = "block";
-
-                document.getElementById("uName").innerText = found.name;
-                document.getElementById("uRole").innerText = found.role;
-                document.getElementById("uInitial").innerText = found.initial;
-                document.getElementById("uMeta").innerText = found.meta;
-                document.getElementById("weekBadge").innerText = "Semana Atual: " + currentWeekText;
-                
-                currentInput = "0";
-                updateDisplay();
-                calculateShift();
-            } else {
-                errorMsg.innerText = "Funcionário não encontrado na lista!";
-                errorMsg.style.display = "block";
-            }
-        }
-
-        function showAdminLogin() {
-            const pass = prompt("Digite a senha de administrador ou seu nick de gerente:");
-            if (pass && (pass === "admin123" || ["afrontoso", "solyta", "chantal"].includes(pass.toLowerCase()))) {
-                document.getElementById("loginScreen").style.display = "none";
-                document.getElementById("adminScreen").style.display = "block";
-                document.getElementById("mainContainer").classList.add("wide");
-                document.getElementById("adminWeekText").innerText = currentWeekText;
-                renderAdminTable();
-            } else if (pass) {
-                alert("Acesso negado!");
-            }
-        }
-
-        function logout() {
-            activeUser = null;
-            document.getElementById("userScreen").style.display = "none";
-            document.getElementById("adminScreen").style.display = "none";
-            document.getElementById("loginScreen").style.display = "flex";
-            document.getElementById("mainContainer").classList.remove("wide");
-            document.getElementById("usernameInput").value = "";
-        }
-
-        const display = document.getElementById("display");
-
-        function updateDisplay() {
-            display.innerText = currentInput;
-        }
-
-        function appendNum(num) {
-            if (currentInput === "0") currentInput = num;
-            else currentInput += num;
-            updateDisplay();
-        }
-
-        function clearNum() {
-            currentInput = "0";
-            updateDisplay();
-        }
-
-        function deleteNum() {
-            if (currentInput.length > 1) currentInput = currentInput.slice(0, -1);
-            else currentInput = "0";
-            updateDisplay();
-        }
-
-        function calculateShift() {
-            let currVal = parseInt(currentInput);
-            if (isNaN(currVal)) currVal = activeUser.initial;
-
-            let feitos = currVal - activeUser.initial;
-            if (feitos < 0) feitos = 0;
-
-            let faltando = activeUser.meta - feitos;
-            const resBox = document.getElementById("resultBox");
-            const resText = document.getElementById("resultText");
-
-            activeUser.current = currVal;
-            saveData();
-
-            if (faltando > 0) {
-                resBox.className = "result-box danger";
-                resText.innerHTML = `Feitos: <span style="color:#ffffff;">${feitos}</span><br><span style="color:#f75a68;">Faltam ${faltando} turnos para a meta</span>`;
-            } else {
-                resBox.className = "result-box";
-                resText.innerHTML = `Feitos: <span style="color:#ffffff;">${feitos}</span><br><span style="color:#00b37e;">🎉 Meta Semanal Batida!</span>`;
-            }
-        }
-
-        function renderAdminTable() {
-            const tbody = document.getElementById("tableBody");
-            tbody.innerHTML = "";
-
-            employees.forEach((emp, index) => {
-                let feitos = emp.current - emp.initial;
-                if (feitos < 0) feitos = 0;
-                let alcançou = feitos >= emp.meta;
-
-                let tr = document.createElement("tr");
-                tr.innerHTML = `
-                    <td><strong>${emp.name}</strong></td>
-                    <td>${emp.role}</td>
-                    <td><strong style="color: #a8a8b3;">${emp.initial}</strong></td>
-                    <td>
-                        <input type="number" class="editable-input" value="${emp.current}" onchange="updateEmpCurrent(${index}, this.value)">
-                    </td>
-                    <td><strong>${feitos}</strong></td>
-                    <td>
-                        <input type="number" class="editable-input" value="${emp.meta}" onchange="updateEmpMeta(${index}, this.value)">
-                    </td>
-                    <td>
-                        <span class="badge-status ${alcançou ? 'badge-success' : 'badge-danger'}">
-                            ${alcançou ? 'Alcançada' : 'Não alcançada'}
-                        </span>
-                    </td>
-                    <td>
-                        <button class="btn btn-admin btn-sm" onclick="removeEmp(${index})">❌</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function updateEmpCurrent(index, val) {
-            employees[index].current = parseInt(val) || employees[index].initial;
-            saveData();
-            renderAdminTable();
-        }
-
-        function updateEmpMeta(index, val) {
-            employees[index].meta = parseInt(val) || 15;
-            saveData();
-            renderAdminTable();
-        }
-
-        function removeEmp(index) {
-            if (confirm(`Remover ${employees[index].name} da lista?`)) {
-                employees.splice(index, 1);
-                saveData();
-                renderAdminTable();
-            }
-        }
-
-        function addNewEmployeePrompt() {
-            const name = prompt("Nome do Funcionário:");
-            if (!name) return;
-            const role = prompt("Cargo:", "Operador de Loja") || "Operador de Loja";
-            const initial = parseInt(prompt("Turno Inicial (Base da última semana):", "0")) || 0;
-
-            employees.push({
-                name: name.trim(),
-                role: role.trim(),
-                initial: initial,
-                current: initial,
-                meta: 15
-            });
-
-            saveData();
-            renderAdminTable();
-        }
-
-        function advanceWeek() {
-            if (confirm("Deseja virar a semana? Os turnos atuais se tornarão os Turnos Finais/Iniciais da nova semana!")) {
-                employees.forEach(emp => {
-                    emp.initial = emp.current;
-                });
-
-                const newWeek = prompt("Digite o período da nova semana:", "26/10/2026 à 01/11/2026");
-                if (newWeek) {
-                    currentWeekText = newWeek;
-                }
-
-                saveData();
-                document.getElementById("adminWeekText").innerText = currentWeekText;
-                renderAdminTable();
-                alert("Semana virada com sucesso!");
-            }
-        }
-
-        document.getElementById("usernameInput").addEventListener("keypress", function(e) {
-            if (e.key === "Enter") loginUser();
-        });
-    </script>
-</body>
-</html>
+        let employees = JSON.parse(localStorage.getItem("habbo_market
