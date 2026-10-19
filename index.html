@@ -537,4 +537,237 @@
             { name: "cityhunter", role: "Operador de Loja", initial: 17, current: 17, meta: 15 }
         ];
 
-        let employees = JSON.parse(localStorage.getItem("habbo_market
+        let employees = JSON.parse(localStorage.getItem("habbo_market_emp")) || defaultEmployees;
+        let currentWeekText = localStorage.getItem("habbo_market_week") || "19/10/2026 à 25/10/2026";
+        let activeUser = null;
+        let currentInput = "0";
+
+        // FUNDO PIXEL
+        const bgIcons = ['🛒', '📦', '🪙', '🍎', '🥤', '🍞', '🏬'];
+        const bgContainer = document.getElementById('pixelBg');
+        for (let i = 0; i < 20; i++) {
+            let icon = document.createElement('div');
+            icon.className = 'pixel-icon';
+            icon.innerText = bgIcons[Math.floor(Math.random() * bgIcons.length)];
+            icon.style.left = Math.random() * 100 + '%';
+            icon.style.animationDuration = (6 + Math.random() * 8) + 's';
+            icon.style.animationDelay = (Math.random() * 5) + 's';
+            bgContainer.appendChild(icon);
+        }
+
+        function saveData() {
+            localStorage.setItem("habbo_market_emp", JSON.stringify(employees));
+            localStorage.setItem("habbo_market_week", currentWeekText);
+        }
+
+        function loginUser() {
+            const nick = document.getElementById("usernameInput").value.trim().toLowerCase();
+            const errorMsg = document.getElementById("errorMessage");
+
+            if (!nick) {
+                errorMsg.innerText = "Por favor, digite seu nickname!";
+                errorMsg.style.display = "block";
+                return;
+            }
+
+            const found = employees.find(e => e.name.toLowerCase() === nick);
+
+            if (found) {
+                activeUser = found;
+                errorMsg.style.display = "none";
+                document.getElementById("loginScreen").style.display = "none";
+                document.getElementById("userScreen").style.display = "block";
+
+                document.getElementById("uName").innerText = found.name;
+                document.getElementById("uRole").innerText = found.role;
+                document.getElementById("uInitial").innerText = found.initial;
+                document.getElementById("uMeta").innerText = found.meta;
+                document.getElementById("weekBadge").innerText = "Semana Atual: " + currentWeekText;
+                
+                currentInput = "0";
+                updateDisplay();
+                calculateShift();
+            } else {
+                errorMsg.innerText = "Funcionário não encontrado na lista!";
+                errorMsg.style.display = "block";
+            }
+        }
+
+        function showAdminLogin() {
+            const pass = prompt("Digite a senha de administrador ou seu nick de gerente:");
+            if (pass && (pass === "admin123" || ["afrontoso", "solyta", "chantal"].includes(pass.toLowerCase()))) {
+                document.getElementById("loginScreen").style.display = "none";
+                document.getElementById("adminScreen").style.display = "block";
+                document.getElementById("mainContainer").classList.add("wide");
+                document.getElementById("adminWeekText").innerText = currentWeekText;
+                document.getElementById("printWeekSpan").innerText = currentWeekText;
+                renderAdminTable();
+            } else if (pass) {
+                alert("Acesso negado!");
+            }
+        }
+
+        function logout() {
+            activeUser = null;
+            document.getElementById("userScreen").style.display = "none";
+            document.getElementById("adminScreen").style.display = "none";
+            document.getElementById("loginScreen").style.display = "flex";
+            document.getElementById("mainContainer").classList.remove("wide");
+            document.getElementById("usernameInput").value = "";
+        }
+
+        const display = document.getElementById("display");
+
+        function updateDisplay() { display.innerText = currentInput; }
+
+        function appendNum(num) {
+            if (currentInput === "0") currentInput = num;
+            else currentInput += num;
+            updateDisplay();
+        }
+
+        function clearNum() { currentInput = "0"; updateDisplay(); }
+
+        function deleteNum() {
+            if (currentInput.length > 1) currentInput = currentInput.slice(0, -1);
+            else currentInput = "0";
+            updateDisplay();
+        }
+
+        function calculateShift() {
+            let currVal = parseInt(currentInput);
+            if (isNaN(currVal)) currVal = activeUser.initial;
+
+            let feitos = currVal - activeUser.initial;
+            if (feitos < 0) feitos = 0;
+
+            let faltando = activeUser.meta - feitos;
+            const resBox = document.getElementById("resultBox");
+            const resText = document.getElementById("resultText");
+
+            activeUser.current = currVal;
+            saveData();
+
+            if (faltando > 0) {
+                resBox.className = "result-box danger";
+                resText.innerHTML = `Feitos: <span style="color:#ffffff;">${feitos}</span><br><span style="color:#f75a68;">Faltam ${faltando} turnos para a meta</span>`;
+            } else {
+                resBox.className = "result-box";
+                resText.innerHTML = `Feitos: <span style="color:#ffffff;">${feitos}</span><br><span style="color:#00b37e;">🎉 Meta Semanal Batida!</span>`;
+            }
+        }
+
+        function renderAdminTable() {
+            const tbody = document.getElementById("tableBody");
+            tbody.innerHTML = "";
+
+            employees.forEach((emp, index) => {
+                let feitos = emp.current - emp.initial;
+                if (feitos < 0) feitos = 0;
+                let alcançou = feitos >= emp.meta;
+
+                let tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td><strong>${emp.name}</strong></td>
+                    <td>${emp.role}</td>
+                    <td>${emp.initial}</td>
+                    <td>
+                        <input type="number" class="editable-input" value="${emp.current}" onchange="updateEmpCurrent(${index}, this.value)">
+                    </td>
+                    <td><strong>${feitos}</strong></td>
+                    <td>
+                        <input type="number" class="editable-input" value="${emp.meta}" onchange="updateEmpMeta(${index}, this.value)">
+                    </td>
+                    <td>
+                        <span class="badge-status ${alcançou ? 'badge-success' : 'badge-danger'}">
+                            ${alcançou ? 'Alcançada' : 'Não alcançada'}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-admin btn-sm" onclick="removeEmp(${index})">❌</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function updateEmpCurrent(index, val) {
+            employees[index].current = parseInt(val) || employees[index].initial;
+            saveData();
+            renderAdminTable();
+        }
+
+        function updateEmpMeta(index, val) {
+            employees[index].meta = parseInt(val) || 15;
+            saveData();
+            renderAdminTable();
+        }
+
+        function removeEmp(index) {
+            if (confirm(`Remover ${employees[index].name} da lista?`)) {
+                employees.splice(index, 1);
+                saveData();
+                renderAdminTable();
+            }
+        }
+
+        function addNewEmployeePrompt() {
+            const name = prompt("Nome do Funcionário:");
+            if (!name) return;
+            const role = prompt("Cargo:", "Operador de Loja") || "Operador de Loja";
+            const initial = parseInt(prompt("Turno Inicial:", "0")) || 0;
+
+            employees.push({
+                name: name.trim(),
+                role: role.trim(),
+                initial: initial,
+                current: initial,
+                meta: 15
+            });
+
+            saveData();
+            renderAdminTable();
+        }
+
+        function advanceWeek() {
+            if (confirm("Deseja virar a semana? Os turnos atuais se tornarão os novos Turnos Iniciais!")) {
+                employees.forEach(emp => {
+                    emp.initial = emp.current;
+                });
+
+                const newWeek = prompt("Digite o período da nova semana:", "26/10/2026 à 01/11/2026");
+                if (newWeek) {
+                    currentWeekText = newWeek;
+                }
+
+                saveData();
+                document.getElementById("adminWeekText").innerText = currentWeekText;
+                document.getElementById("printWeekSpan").innerText = currentWeekText;
+                renderAdminTable();
+                alert("Semana virada com sucesso!");
+            }
+        }
+
+        // FUNÇÃO PARA GERAR A IMAGEM DA TABELA AUTOMATICAMENTE
+        function generateTableImage() {
+            const tableArea = document.getElementById("printableTableArea");
+            
+            // Renderiza o elemento como canvas
+            html2canvas(tableArea, {
+                backgroundColor: "#121214",
+                scale: 2 // Alta qualidade
+            }).then(canvas => {
+                // Cria link de download automático
+                const link = document.createElement('a');
+                link.download = `Relatorio_Turnos_${currentWeekText.replace(/[/]/g, '-')}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        }
+
+        document.getElementById("usernameInput").addEventListener("keypress", function(e) {
+            if (e.key === "Enter") loginUser();
+        });
+    </script>
+</body>
+</html>
